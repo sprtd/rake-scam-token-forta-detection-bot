@@ -52,6 +52,32 @@ export const filterFunctionAndEvent = (func: TransactionDescription, swapEvents:
 
 
     }
+    else if (functionName === "swapExactETHForTokensSupportingFeeOnTransferTokens") {
+        const to = func.args.to
+        let actualValueReceived: BigNumber = new BigNumber(0), initialAmountOut: BigNumber = new BigNumber(0), tokenAddress: string = "";
+
+        swapEvents.forEach(event => {
+            if (event.args.to === to) {
+                const [amount0Out, amount1Out] = event.args
+                initialAmountOut = amount0Out === 0 ? amount1Out : amount0Out
+            }
+        })
+
+        transferEvents.forEach(event => {
+            const { sender, recipient, value } = event.args;
+            if (sender === pairAddress && recipient === to) {
+                actualValueReceived = value;
+                tokenAddress = event.address;
+            }
+        });
+
+        const rakedInPercentage = initialAmountOut.minus(actualValueReceived).div(initialAmountOut).multipliedBy(100);
+        if (rakedInPercentage.gte(THRESHOLD_PERCENT)) return [createFinding(tokenAddress, pairAddress, functionName, initialAmountOut.toString(), actualValueReceived.toString(), initialAmountOut.minus(actualValueReceived), rakedInPercentage.toString())]
+    }
+
+
+
+    // console.log(findings)
     return findings;
 
 
