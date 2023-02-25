@@ -49,10 +49,7 @@ export const filterFunctionAndEvent = (func: TransactionDescription, swapEvents:
         console.log("token address_", tokenAddress)
         if (rakedInPercentage.gte(THRESHOLD_PERCENT))
             return [createFinding(tokenAddress, pairAddress, functionName, initialAmountIn.toString(), actualValueSent.toString(), initialAmountIn.minus(actualValueSent), rakedInPercentage.toFixed(2))]
-
-
-    }
-    else if (functionName === "swapExactETHForTokensSupportingFeeOnTransferTokens") {
+    } else if (functionName === "swapExactETHForTokensSupportingFeeOnTransferTokens") {
         const to = func.args.to
         let actualValueReceived: BigNumber = new BigNumber(0), initialAmountOut: BigNumber = new BigNumber(0), tokenAddress: string = "";
 
@@ -73,9 +70,37 @@ export const filterFunctionAndEvent = (func: TransactionDescription, swapEvents:
 
         const rakedInPercentage = initialAmountOut.minus(actualValueReceived).div(initialAmountOut).multipliedBy(100);
         if (rakedInPercentage.gte(THRESHOLD_PERCENT)) return [createFinding(tokenAddress, pairAddress, functionName, initialAmountOut.toString(), actualValueReceived.toString(), initialAmountOut.minus(actualValueReceived), rakedInPercentage.toString())]
+    } else {
+        const { to, amountIn, path } = func.args;
+        let initialAmountIn: BigNumber, initialAmountOut: BigNumber,
+            actualAmountIn: BigNumber, actualAmountOut: BigNumber, tokenOutAddress: string, tokenInAddress: string;
+        initialAmountOut = actualAmountIn = actualAmountOut = new BigNumber(0);
+        initialAmountIn = amountIn;
+        tokenInAddress = path[0];
+        tokenOutAddress = path[path.length - 1];
+        swapEvents.forEach(log => {
+            if (log.args.to === to) {
+                const { amount0In, amount1In, amount0Out, amount1Out } = log.args
+                actualAmountIn = amount0In === 0 ? amount1In : amount0In;
+                initialAmountOut = amount0Out === 0 ? amount1Out : amount0Out;
+            }
+        })
+
+        transferEvents.forEach(event => {
+            const { sender, recipient, value } = event.args;
+            if (sender === pairAddress && recipient === to && event.address === tokenOutAddress) {
+                actualAmountOut = value;
+            }
+        });
+
+        const rakedOutPercentage = initialAmountOut.minus(actualAmountOut).div(initialAmountOut).multipliedBy(100);
+        const rakedInPercentage = initialAmountIn.minus(actualAmountIn).div(initialAmountIn).multipliedBy(100);
+        if (rakedInPercentage.gte(THRESHOLD_PERCENT))
+            return [createFinding(tokenInAddress, pairAddress, functionName, initialAmountIn.toString(), actualAmountIn.toString(), initialAmountIn.minus(actualAmountIn), rakedInPercentage.toString())]
+        if (rakedOutPercentage.gte(THRESHOLD_PERCENT))
+            return [createFinding(tokenOutAddress, pairAddress, functionName, initialAmountOut.toString(), actualAmountOut.toString(), initialAmountOut.minus(actualAmountOut), rakedOutPercentage.toString())]
+
     }
-
-
 
     // console.log(findings)
     return findings;
