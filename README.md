@@ -2,14 +2,15 @@
 
 ## Description
 
-This bot detects the deployment of tokens with malicious contract logic which significantly takes additional swap fee on Uniswap DEX and transfers it to an EOA
+This bot detects the rake scam token which takes additional swap fee on Uniswap DEX and transfers it to an EOA
+
 
 ## Supported Chains
 
 - Ethereum
 - Polygon
 - Arbitrum
-- Optimism
+- Optimism 
 - Celo
 
 
