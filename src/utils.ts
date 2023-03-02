@@ -9,9 +9,9 @@ BigNumber.set({ DECIMAL_PLACES: 18 });
 
 const toBn = (ethersBn: BigNumberish) => new BigNumber(ethersBn.toString());
 
-const lCase = (address: string): string => address.toLowerCase()
+export const lCase = (address: string): string => address.toLowerCase()
 
-const uniCreate2 = (t0: string, t1: string, factory: string = UNISWAP_V2_FACTORY): string => {
+export const uniCreate2 = (t0: string, t1: string, factory: string = UNISWAP_V2_FACTORY): string => {
     const tokenA = lCase(t0);
     const tokenB = lCase(t1);
     const token0: string = tokenA < tokenB ? tokenA : tokenB;
