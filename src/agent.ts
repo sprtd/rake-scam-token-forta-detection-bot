@@ -19,7 +19,7 @@ import {
   SWAP_EXACT_TOKEN_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   UNISWAP_V2_ROUTER,
   UNISWAP_V2_SWAP_EVENT,
-  UNISWAP_PAIR_INIT_CODE,
+  UNISWAP_PAIR_INIT_CODE_HASH,
   UNISWAP_V2_FACTORY,
   TOKEN_TRANSFER_EVENT
 } from './constants';
@@ -48,7 +48,7 @@ export const provideHandleTransaction = (
       const [tokenA, tokenB]  =[path[path.length - 2], path[path.length - 1]];  
       const token0: string = tokenA < tokenB ? tokenA : tokenB;
       const token1: string = tokenA < tokenB ? tokenB : tokenA;
-      const pairAddress = getUniswapPairCreate2(factoryAddress, token0, token1, initCode);
+      const pairAddress = getUniswapPairCreate2(factoryAddress, token0, token1);
       findings.push(...filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog,pairAddress, txEvent.from)); 
     });
     return findings;
@@ -64,7 +64,7 @@ export default {
     UNISWAP_V2_ROUTER,
     UNISWAP_V2_SWAP_EVENT,
     TOKEN_TRANSFER_EVENT,
-    UNISWAP_PAIR_INIT_CODE,
+    UNISWAP_PAIR_INIT_CODE_HASH,
     UNISWAP_V2_FACTORY 
     )
 };
