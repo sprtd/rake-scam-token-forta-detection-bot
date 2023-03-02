@@ -35,11 +35,11 @@ Describe each of the type of alerts fired by this agent
 
 The bot behaviour can be verified with the following transactions:
 - [0x300e0afc3b94b77b7310ad632a2377bafd017ff8078470f73dfb01f4917b5379](https://etherscan.io/tx/0x300e0afc3b94b77b7310ad632a2377bafd017ff8078470f73dfb01f4917b5379) - 
-`Ethereum Mainnet` - swapExactTokensForEthSupportingFeeOnTransferTokens
+`Ethereum Mainnet - swapExactTokensForEthSupportingFeeOnTransferTokens`
   > Raked Fee Percentage - 5%
 
 
 
 - [0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5](https://etherscan.io/tx/0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5) -
-`Ethereum Mainnet` - swapExactETHForTokensSupportingFeeOnTransferTokens
+`Ethereum Mainnet - swapExactETHForTokensSupportingFeeOnTransferTokens`
   > Raked Fee Percentage -  5%
