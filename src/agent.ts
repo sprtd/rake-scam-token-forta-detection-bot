@@ -5,7 +5,7 @@ import {
   ethers,
 } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
-import { filterFunctionAndEvent, getUniswapPairCreate2 } from "./utils";
+import { filterFunctionAndEvent } from "./utils";
 import NetworkManager, { NETWORK_MAP } from "./network"
 import NetworkData from "./network"
 
@@ -42,15 +42,7 @@ export const provideHandleTransaction = (
     const txTransferEventLog = txEvent.filterLog(tokenTransferEvent);
     const txSwapEventLog = txEvent.filterLog(swapEvent);
     txFunction.forEach((func) => {
-      const { args } = func;
-      const path: string[] = args.path;
-      const to: string = args.to;
-      const [tokenA, tokenB] = [path[path.length - 2], path[path.length - 1]];
-      const token0: string = tokenA < tokenB ? tokenA : tokenB;
-      const token1: string = tokenA < tokenB ? tokenB : tokenA;
-
-      const pairAddress = getUniswapPairCreate2(networkManager.factory, token0, token1);
-      findings.push(...filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog, pairAddress, txEvent.from));
+      findings.push(...filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog, txEvent.from));
      
     });
     return findings;

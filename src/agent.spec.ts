@@ -129,4 +129,20 @@ describe("Rake Scam Token Test Suite", () => {
         expect(findings).toStrictEqual([]);
     });
 
+
+    it.only("should return finding when swapFeeOnTransferToken function is called on Uniswap's Router contract", async () => {
+        txEvent = new TestTransactionEvent().addTraces({
+          to: MOCK_ROUTER,
+          value: MOCK_IFACE.encodeFunctionData("swapExactETHForTokensSupportingFeeOnTransferTokens", [ethers.BigNumber.from(1000), [TEST_CASES[3], TEST_CASES[4]], TEST_CASES[1], ethers.BigNumber.from(1777791157)]),
+
+        });
+       const findings = await handleTransaction(txEvent);
+
+       console.log("findings__", findings )
+        // expect(findings).toStrictEqual([
+        //   mockCreateFinding(TEST_CASES[0], TEST_CASES[1], mockCreatePair(MOCK_FACTORY, TEST_CASES[0], TEST_CASES[1])),
+        // ]);
+      });
+    
+
 });
