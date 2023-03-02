@@ -1,5 +1,5 @@
 import { FindingType, FindingSeverity, Finding, HandleTransaction, TransactionEvent, ethers } from "forta-agent";
-import {  createAddress } from "forta-agent-tools/lib/utils"
+import { createAddress } from "forta-agent-tools/lib/utils"
 import { TestTransactionEvent } from "forta-agent-tools/lib/test"
 import { keccak256 } from "forta-agent/dist/sdk/utils";
 import { utils } from "ethers";
@@ -17,7 +17,7 @@ const MOCK_FACTORY: string = createAddress("0xaaa0000")
 const MOCK_ROUTER: string = createAddress("0xbbbb9999")
 const MOCK_SWAP_EXACT_TOKENS_FOR_TOKENS = "function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)"
 const MOCK_INIT_CODE_HASH: string = keccak256(MOCK_FACTORY);
-const MOCK_IFACE: ethers.utils.Interface = new ethers.utils.Interface([MOCK_SWAP_EXACT_TOKENS_FOR_TOKENS, MOCK_OTHER_FUNCTION]);
+const MOCK_IFACE: ethers.utils.Interface = new ethers.utils.Interface([SWAP_EXACT_TOKEN_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS, SWAP_EXACT_ETH_FOR_SUPPORTING_FEE_ON_TRANSFER_TOKENS, SWAP_EXACT_TOKEN_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS, MOCK_OTHER_FUNCTION, MOCK_SWAP_EXACT_TOKENS_FOR_TOKENS]);
 
 const TEST_CASES: string[] = [
     createAddress("0xaa1111"),
@@ -97,5 +97,18 @@ describe("Rake Scam Token Test Suite", () => {
         expect(findings).toStrictEqual([]);
     });
 
-   
+    it("should ignore non-swapFee function call on Uniswap's Router contract", async () => {
+        txEvent = new TestTransactionEvent()
+            .addTraces({
+                to: MOCK_ROUTER,
+                value: MOCK_IFACE.encodeFunctionData("_swap", [[ethers.BigNumber.from(1000)], [TEST_CASES[0], TEST_CASES[1]], TEST_CASES[2]]), // different function - _swap
+            })
+            .addTraces({
+                to: MOCK_ROUTER,
+                value: MOCK_IFACE.encodeFunctionData("swapExactTokensForTokens", [ethers.BigNumber.from(10), ethers.BigNumber.from(100), [TEST_CASES[0], TEST_CASES[1]], TEST_CASES[2], ethers.BigNumber.from(1777791157)]) // different function - swapExactTokensForTokens
+            })
+        const findings: Finding[] = await handleTransaction(txEvent);
+        expect(findings).toStrictEqual([]);
+    });
+
 });
