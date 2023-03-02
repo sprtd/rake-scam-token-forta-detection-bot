@@ -2,15 +2,14 @@
 
 ## Description
 
-This bot detects the rake scam token which takes additional swap fee on Uniswap DEX and transfers it to an EOA
-
+This bot detects the deployment of tokens with malicious contract logic which significantly takes additional swap fee on Uniswap DEX and transfers it to an EOA
 
 ## Supported Chains
 
 - Ethereum
 - Polygon
 - Arbitrum
-- Optimism 
+- Optimism
 - Celo
 
 
@@ -25,9 +24,10 @@ Describe each of the type of alerts fired by this agent
   - Metadata contains the following fields: 
     - tokenAddress: address of the deployed rake scam token
     - pairAddress: address of the created uniswap tokens pair
+    - from: address of the user initiating the swap transaction on Uniswap
     - swapFeeFunctionCalled: name of the triggered Uniswap swap fee function
     - totalAmountTransferred: total amount of scam tokens transferred to Uniswap Router contract
-    - actualAmountReceived: amount received by the user executing the swap after the deduction of swap fee
+    - actualAmountReceived: amount received by the user executing the swap following the deduction of swap fee
     - rakedFee: total fee taken by scam token contract
     - rakedFeePercentage: percentage of the fee raked in by the scam token contract
 
