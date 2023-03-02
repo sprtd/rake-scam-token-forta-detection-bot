@@ -111,4 +111,22 @@ describe("Rake Scam Token Test Suite", () => {
         expect(findings).toStrictEqual([]);
     });
 
+    it("should ignore swapFeeOnTransferToken function call on a non-Uniswap Router contract", async () => {
+        txEvent = new TestTransactionEvent()
+            .addTraces({
+                to: createAddress("0x567"), // different contract
+                value: MOCK_IFACE.encodeFunctionData("swapExactTokensForETHSupportingFeeOnTransferTokens", [ethers.BigNumber.from(1000), ethers.BigNumber.from(0), [TEST_CASES[3], TEST_CASES[4]], TEST_CASES[5], ethers.BigNumber.from(1777791157)]),
+            })
+            .addTraces({
+                to: createAddress("0x567"), // different contract
+                value: MOCK_IFACE.encodeFunctionData("swapExactETHForTokensSupportingFeeOnTransferTokens", [ethers.BigNumber.from(1000), [TEST_CASES[3], TEST_CASES[4]], TEST_CASES[5], ethers.BigNumber.from(1777791157)]),
+            })
+            .addTraces({
+                to: createAddress("0x567"), // different contract
+                value: MOCK_IFACE.encodeFunctionData("swapExactTokensForTokensSupportingFeeOnTransferTokens", [ethers.BigNumber.from(1000), ethers.BigNumber.from(0), [TEST_CASES[3], TEST_CASES[4]], TEST_CASES[5], ethers.BigNumber.from(1777791157)]),
+            });
+        const findings: Finding[] = await handleTransaction(txEvent);
+        expect(findings).toStrictEqual([]);
+    });
+
 });
