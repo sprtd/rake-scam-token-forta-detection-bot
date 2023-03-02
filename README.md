@@ -25,7 +25,6 @@ Describe each of the type of alerts fired by this agent
     - tokenAddress: address of the deployed rake scam token
     - pairAddress: address of the created uniswap tokens pair
     - from: address of the user initiating the swap transaction on Uniswap
-    - swapFeeFunctionCalled: name of the triggered Uniswap swap fee function
     - totalAmountTransferred: total amount of scam tokens transferred to Uniswap Router contract
     - actualAmountReceived: amount received by the user executing the swap following the deduction of swap fee
     - rakedFee: total fee taken by scam token contract

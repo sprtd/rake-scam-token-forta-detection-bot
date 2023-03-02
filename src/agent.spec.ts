@@ -1,7 +1,6 @@
 import { FindingType, FindingSeverity, Finding, HandleTransaction, TransactionEvent, ethers } from "forta-agent";
 import {  createAddress } from "forta-agent-tools/lib/utils"
 import { TestTransactionEvent } from "forta-agent-tools/lib/test"
-// import { createAddress, MockEthersProvider } from "forta-agent-tools/lib/utils";
 import { keccak256 } from "forta-agent/dist/sdk/utils";
 import { utils } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
@@ -98,61 +97,5 @@ describe("Rake Scam Token Test Suite", () => {
         expect(findings).toStrictEqual([]);
     });
 
-    //     txEvent = new TestTransactionEvent().addTraces({
-    //         to: MOCK_FACTORY,
-    //         input: MOCK_IFACE.encodeFunctionData("setFeeToSetter", [TEST_CASES[0]]), // different function - setFeeToSetter
-    //     });
-
-    //     findings = await handleTransaction(txEvent);
-    //     expect(findings).toStrictEqual([]);
-    // });
-
-    // it("should ignore createPair function call on a non-Pancakeswap Factory contract", async () => {
-    //     txEvent = new TestTransactionEvent().addTraces({
-    //         to: createAddress("0x567"), // different contract
-    //         input: MOCK_IFACE.encodeFunctionData("createPair", [TEST_CASES[0], TEST_CASES[1]]),
-    //     });
-    //     findings = await handleTransaction(txEvent);
-    //     expect(findings).toStrictEqual([]);
-    // });
-
-    // it("should return finding when createPair function is called on Pancakeswap's Factory contract", async () => {
-    //     txEvent = new TestTransactionEvent().addTraces({
-    //         to: MOCK_FACTORY,
-    //         input: MOCK_IFACE.encodeFunctionData("createPair", [TEST_CASES[0], TEST_CASES[1]]),
-    //     });
-    //     findings = await handleTransaction(txEvent);
-    //     expect(findings).toStrictEqual([
-    //         mockCreateFinding(TEST_CASES[0], TEST_CASES[1], mockCreatePair(MOCK_FACTORY, TEST_CASES[0], TEST_CASES[1])),
-    //     ]);
-    // });
-
-    // it("should return multiple findings when createPair function is called more than once on Pancakeswap's Factory contract", async () => {
-    //     txEvent = new TestTransactionEvent().addTraces(
-    //         {
-    //             to: MOCK_FACTORY,
-    //             input: MOCK_IFACE.encodeFunctionData("createPair", [TEST_CASES[0], TEST_CASES[1]]),
-    //         },
-    //         {
-    //             to: MOCK_FACTORY,
-    //             input: MOCK_IFACE.encodeFunctionData("createPair", [TEST_CASES[2], TEST_CASES[3]]),
-    //         },
-    //         {
-    //             to: MOCK_FACTORY,
-    //             input: MOCK_IFACE.encodeFunctionData("createPair", [TEST_CASES[4], TEST_CASES[5]]),
-    //         },
-    //         {
-    //             to: MOCK_FACTORY,
-    //             input: MOCK_IFACE.encodeFunctionData("createPair", [TEST_CASES[6], TEST_CASES[7]]),
-    //         }
-    //     );
-
-    //     findings = await handleTransaction(txEvent);
-    //     expect(findings).toStrictEqual([
-    //         mockCreateFinding(TEST_CASES[0], TEST_CASES[1], mockCreatePair(MOCK_FACTORY, TEST_CASES[0], TEST_CASES[1])),
-    //         mockCreateFinding(TEST_CASES[2], TEST_CASES[3], mockCreatePair(MOCK_FACTORY, TEST_CASES[2], TEST_CASES[3])),
-    //         mockCreateFinding(TEST_CASES[4], TEST_CASES[5], mockCreatePair(MOCK_FACTORY, TEST_CASES[4], TEST_CASES[5])),
-    //         mockCreateFinding(TEST_CASES[6], TEST_CASES[7], mockCreatePair(MOCK_FACTORY, TEST_CASES[6], TEST_CASES[7])),
-    //     ]);
-    // });
+   
 });
