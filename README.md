@@ -18,7 +18,7 @@ This bot detects the deployment of tokens with malicious contract logic which si
 Describe each of the type of alerts fired by this agent
 
 - GITCOIN-FORTA-1
-  - Fired when a token is deployed with a malicious contract logic to take a significant percentage fee and transfer it to an EOA 
+  - Fired when a token takes significant percentage fee on Uniswap Router and transfers it to an EOA
   - Severity is always set to "low" 
   - Type is always set to "info"
   - Metadata contains the following fields: 

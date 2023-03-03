@@ -10,13 +10,10 @@ import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
-const toBn = (ethersBn: BigNumberish) => new BigNumber(ethersBn.toString());
+export const toBn = (ethersBn: BigNumberish) => new BigNumber(ethersBn.toString());
+
 export const lCase = (address: string): string =>  {
-    console.log("address here__", address)
    return address.toLowerCase()
-
-    
-
 }
 
 // generate new pair address
@@ -145,18 +142,58 @@ const executeExactETHForTokensFeeOnTransfer = (txDescription: TransactionDescrip
 };
 
 
+/** 
+[
+    "0x3788888" ---- BOX, initialAmountIn -- tx.args, actualAmountIn -- amountIn of emittedSwapEvent(emiting
+         addr == pair(path0, path1), to of SwapEvent == pair(path1, path2))
+
+
+    "0x378TRD" ---- usdt, initialAmountIn --- amountOut of swapEvent(emiting addr == pair(path0, 
+        path1), to of SwapEvent == pair(path1, path2) ),   actualAmountIn == amountIn of swapEvent(
+            emiting addr == pair(path1, path2), to of SwapEvent == pair(path2, path3) )
+    "0x378TRD" ---- screenTop, initialAmountIn == amountOut of swapEvent(emiting addr == pair(path1, 
+        path2), to of SwapEvent == pair(path2, path3) ), actualAmountIn == amountIn of swapEvent(emiting 
+            addr == pair(path2, path3), to = txDescription.args.to)
+    "0x45353 --- zora" initialAmountIn == amountOut of swapEvent(emiting addr == pair(path2, 
+        path3), to of SwapEvent == txDescription.args.to ), actualAmountIn == value of transferEvent(pair(path2, path3),
+        txDescription.args.to)
+]
+*/
+const executeExactTokensForTokensFeeOnTransfer = (txDescription: TransactionDescription,
+    transferEvents: LogDescription[], swapEvents: LogDescription[], txFrom: string, finding: Finding[]) => {
+    let initialAmountIn: BigNumber, actualAmountIn: BigNumber, swapRecipient: string, pairAddress: string
+    initialAmountIn = toBn(txDescription.args.amountIn);
+    const path: string[] = txDescription.args.path;
+    for (let i = 0; i < path.length; i++) {
+        swapRecipient = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : txDescription.args.to;
+        if (i === path.length - 1) {
+            pairAddress = uniCreate2(path[i - 1], path[i]);
+            [actualAmountIn] = parseTransferEvents(transferEvents, pairAddress, swapRecipient, path[i]);
+        } else {
+            pairAddress = uniCreate2(path[i], path[i + 1]);
+            [, actualAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
+        };
+        finding.push(...checkForFinding(initialAmountIn,actualAmountIn, path[i], pairAddress,
+            txFrom, txDescription.name));
+        [initialAmountIn,] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
+    }
+}
+
 
 export const filterFunctionAndEvent = (txDescription: TransactionDescription, swapEvents: LogDescription[],
     transferEvents: LogDescription[], txFrom: string): Finding[] => {
     let findings: Finding[] = [];
-    let functionName = txDescription.name
-    switch (functionName){
+    switch (txDescription.name){
         case "swapExactTokensForETHSupportingFeeOnTransferTokens": {
             executeExactTokenForEthFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
             break;
         }
         case "swapExactETHForTokensSupportingFeeOnTransferTokens": {
             executeExactETHForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
+            break;
+        }
+        case "swapExactTokensForTokensSupportingFeeOnTransferTokens": {
+            executeExactTokensForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
             break;
         }
     }
