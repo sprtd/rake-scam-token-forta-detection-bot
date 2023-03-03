@@ -2,7 +2,7 @@
 
 ## Description
 
-This bot detects the deployment of tokens with malicious contract logic which significantly takes additional swap fee on Uniswap DEX and transfers it to an EOA
+This bot detects scam tokens which significantly takes additional swap fee on Uniswap DEX and transfers it to an EOA
 
 ## Supported Chains
 
@@ -42,3 +42,9 @@ The bot behaviour can be verified with the following transactions:
 - [0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5](https://etherscan.io/tx/0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5) -
 `Ethereum Mainnet - swapExactETHForTokensSupportingFeeOnTransferTokens`
   > Raked Fee Percentage -  5%
+
+
+
+- [0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1](https://etherscan.io/tx/0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1) -
+`Ethereum Mainnet - swapExactTokensForTokensSupportingFeeOnTransferTokens`
+  > Raked Fee Percentage -  5.75%

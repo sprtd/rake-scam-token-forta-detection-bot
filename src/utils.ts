@@ -67,21 +67,7 @@ const checkForFinding = (initialAmountIn: BigNumber, actualAmountIn: BigNumber,
     return []
 }
 
-/** 
-[
-    "0x3788888" ---- zora, initialAmountIn -- tx.args, actualAmountIn --emittedTransferEvent(txFrom,pair(path0, 
-        path1))
 
-
-    "0x378TRD" ---- usdt, initialAmountIn --- amountOut of swapEvent(emiting addr == pair(path0, 
-        path1), to of SwapEvent == pair(path1, path2) ),   actualAmountIn == value of transferEvent(pair(path0, 
-        path1, pair(path1, path2))
-    "0x378TRD" ---- screenTop, initialAmountIn == amountOut of swapEvent(emiting addr == pair(path1, 
-        path2), to of SwapEvent == pair(path2, path3) ), actualAmountIn == value of transferEvent(pair(path1, 
-        path2, pair(path2, path3))
-    "0x45353 --- weth"
-]
-*/
 const executeExactTokenForEthFeeOnTransfer = (txDescription: TransactionDescription, transferEvents: LogDescription[],
     swapEvents: LogDescription[], txFrom: string, finding: Finding[]) => {
     let actualAmountIn: BigNumber, initialAmountIn: BigNumber, to: string, pairAddress: string;
@@ -102,24 +88,6 @@ const executeExactTokenForEthFeeOnTransfer = (txDescription: TransactionDescript
     };
 };
 
-
-/** 
-[
-    "0x3788888" ---- weth, initialAmountIn -- tx.args, actualAmount --emittedTransferEvent(txFrom,pair(path0, 
-        path1))
-
-
-    "0x378TRD" ---- usdt, initialAmountIn --- amountOut of swapEvent(emiting addr == pair(path0, 
-        path1), to of SwapEvent == pair(path1, path2) ),   actualAmountIn == amountIn of swapEvent(
-            emiting addr == pair(path1, path2), to of SwapEvent == pair(path2, path3) )
-    "0x378TRD" ---- screenTop, initialAmountIn == amountOut of swapEvent(emiting addr == pair(path1, 
-        path2), to of SwapEvent == pair(path2, path3) ), actualAmountIn == amountOut of swapEvent(emiting 
-            addr == pair(path2, path3), to = txDescription.args.to)
-    "0x45353 --- zora" initialAmountIn == amountOut of swapEvent(emiting addr == pair(path2, 
-        path3), to of SwapEvent == txDescription.args.to ), actualAmountIn == value of transferEvent(pair(path2, path3),
-        txDescription.args.to)
-]
-*/
 const executeExactETHForTokensFeeOnTransfer = (txDescription: TransactionDescription, transferEvents: LogDescription[],
     swapEvents: LogDescription[], txFrom: string, finding: Finding[]) => {
     let initialAmountIn: BigNumber, actualAmountIn: BigNumber, swapRecipient: string, pairAddress: string,
@@ -141,24 +109,6 @@ const executeExactETHForTokensFeeOnTransfer = (txDescription: TransactionDescrip
     };
 };
 
-
-/** 
-[
-    "0x3788888" ---- BOX, initialAmountIn -- tx.args, actualAmountIn -- amountIn of emittedSwapEvent(emiting
-         addr == pair(path0, path1), to of SwapEvent == pair(path1, path2))
-
-
-    "0x378TRD" ---- usdt, initialAmountIn --- amountOut of swapEvent(emiting addr == pair(path0, 
-        path1), to of SwapEvent == pair(path1, path2) ),   actualAmountIn == amountIn of swapEvent(
-            emiting addr == pair(path1, path2), to of SwapEvent == pair(path2, path3) )
-    "0x378TRD" ---- screenTop, initialAmountIn == amountOut of swapEvent(emiting addr == pair(path1, 
-        path2), to of SwapEvent == pair(path2, path3) ), actualAmountIn == amountIn of swapEvent(emiting 
-            addr == pair(path2, path3), to = txDescription.args.to)
-    "0x45353 --- zora" initialAmountIn == amountOut of swapEvent(emiting addr == pair(path2, 
-        path3), to of SwapEvent == txDescription.args.to ), actualAmountIn == value of transferEvent(pair(path2, path3),
-        txDescription.args.to)
-]
-*/
 const executeExactTokensForTokensFeeOnTransfer = (txDescription: TransactionDescription,
     transferEvents: LogDescription[], swapEvents: LogDescription[], txFrom: string, finding: Finding[]) => {
     let initialAmountIn: BigNumber, actualAmountIn: BigNumber, swapRecipient: string, pairAddress: string
