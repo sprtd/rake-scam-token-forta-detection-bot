@@ -52,11 +52,13 @@ const TEST_CASES = {
 }
 
 
-const mockCreateFinding = (tokenAddress: string, pairAddress: string, from: string, swapFeeFunctionCalled: string, totalAmountTransferred: string,
+
+
+export const mockCreateFinding = (tokenAddress: string, pairAddress: string, from: string, feeOnTransferFunctionCalled: string, totalAmountTransferred: string,
     actualValueReceived: string, rakedFee: BigNumber, rakedFeePercentage: string,): Finding => {
     return Finding.fromObject({
         name: "Rake Scam Token Detection Bot",
-        description: "Detects rake scam token which significantly takes additional swap fee on Uniswap DEX",
+        description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
         alertId: "GITCOIN-FORTA-1",
         severity: FindingSeverity.Info,
         type: FindingType.Info,
@@ -65,7 +67,6 @@ const mockCreateFinding = (tokenAddress: string, pairAddress: string, from: stri
             tokenAddress,
             pairAddress,
             from,
-            swapFeeFunctionCalled,
             totalAmountTransferred,
             actualValueReceived,
             rakedFee: rakedFee.toString(),
@@ -152,7 +153,9 @@ describe("Rake Scam Token Test Suite", () => {
 
         const pair = uniCreate2(TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1)
         const [amount0In, amount1Out] = ["5000000", "3000"];
-
+        // const swapFeeOnTransferToken = 
+        const parseTakeFee = takeFee(toBn(amount1Out), toBn(3)).toString()
+        console.log("parse__ fee__", parseTakeFee.toString())
         txEvent = new TestTransactionEvent()
             .addTraces({
                 to: MOCK_ROUTER,
@@ -163,11 +166,24 @@ describe("Rake Scam Token Test Suite", () => {
             }).setFrom(TEST_CASES.SWAP_RECIPIENT)
             .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
             .addEventLog(...createTransferEvent(TEST_CASES.WETH, MOCK_ROUTER, pair, amount0In))
-            .addEventLog(...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, `${takeFee(toBn(amount1Out), toBn(3))}`))
+            .addEventLog(...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, parseTakeFee.toString()))
 
         const findings = await handleTransaction(txEvent);
-
         console.log("findings__", findings)
+
+        expect(findings).toStrictEqual([
+            mockCreateFinding(
+                    TEST_CASES.SCAM_TOKEN_1,
+                    pair,
+                    TEST_CASES.SWAP_RECIPIENT,
+                    "swapExactETHForTokensSupportingFeeOnTransferTokens",
+                    amount1Out,
+                    parseTakeFee,
+                    toBn(amount1Out).minus(parseTakeFee),
+                    "3.00"
+                )
+          ]);
+
     });
 
 
