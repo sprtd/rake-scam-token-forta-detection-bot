@@ -1,7 +1,7 @@
 import {
   Finding,
   HandleTransaction,
-  TransactionEvent,  getEthersProvider,
+  TransactionEvent, getEthersProvider,
   ethers,
 } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
@@ -11,7 +11,7 @@ import NetworkData from "./network"
 
 import {
   SWAP_EXACT_TOKEN_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
-  SWAP_EXACT_ETH_FOR_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
+  SWAP_EXACT_ETH_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   SWAP_EXACT_TOKEN_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   UNISWAP_V2_SWAP_EVENT,
   TOKEN_TRANSFER_EVENT
@@ -26,7 +26,7 @@ const networkManager = new NetworkManager(NETWORK_MAP)
 export const provideInitialize = (provider: ethers.providers.Provider) => async () => {
   const { chainId } = await provider.getNetwork();
   networkManager.setNetwork(chainId);
- 
+
 };
 
 export const provideHandleTransaction = (
@@ -43,15 +43,15 @@ export const provideHandleTransaction = (
     const txSwapEventLog = txEvent.filterLog(swapEvent);
     txFunction.forEach((func) => {
       findings.push(...filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog, txEvent.from));
-     
+      
     });
     return findings;
   };
 };
 
 export default {
-  initialize: provideInitialize(getEthersProvider()) ,
-  handleTransaction: provideHandleTransaction([SWAP_EXACT_ETH_FOR_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
+  initialize: provideInitialize(getEthersProvider()),
+  handleTransaction: provideHandleTransaction([SWAP_EXACT_ETH_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
     SWAP_EXACT_TOKEN_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
     SWAP_EXACT_TOKEN_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS],
     networkManager,

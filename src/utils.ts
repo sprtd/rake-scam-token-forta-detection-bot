@@ -12,9 +12,7 @@ BigNumber.set({ DECIMAL_PLACES: 18 });
 
 export const toBn = (ethersBn: BigNumberish) => new BigNumber(ethersBn.toString());
 
-export const lCase = (address: string): string =>  {
-   return address.toLowerCase()
-}
+export const lCase = (address: string): string =>  address.toLowerCase()
 
 // generate new pair address
 export const uniCreate2 = (t0: string, t1: string, factory: string = UNISWAP_V2_FACTORY): string => {
@@ -100,10 +98,12 @@ const executeExactETHForTokensFeeOnTransfer = (txDescription: TransactionDescrip
             [initialAmountIn,] = parseSwapEvents(swapEvents, swapRecipient, prevPairAddress);
             [actualAmountIn] = parseTransferEvents(transferEvents, prevPairAddress, swapRecipient, path[i]);
         } else {
-            pairAddress = uniCreate2(lCase(path[i]), lCase(path[i + 1]));
+            pairAddress = uniCreate2(path[i], path[i + 1]);
             [initialAmountIn,] = parseSwapEvents(swapEvents, pairAddress, prevPairAddress);
             [, actualAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
         };
+        console.log("PrevpairAddress... in agent", prevPairAddress)
+        console.log("swap recipient... in agent", swapRecipient)
         finding.push(...checkForFinding(initialAmountIn,actualAmountIn,path[i], prevPairAddress,
             txFrom, txDescription.name));
     };
