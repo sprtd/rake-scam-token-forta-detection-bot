@@ -2,8 +2,6 @@ import { FindingType, FindingSeverity, Finding, HandleTransaction, TransactionEv
 import { createAddress } from "forta-agent-tools/lib/utils"
 import { TestTransactionEvent } from "forta-agent-tools/lib/test"
 import { keccak256, } from "forta-agent/dist/sdk/utils";
-// import { encodeParameter } from "forta-agent-tools/lib/utils";
-import { getCreate2Address } from "@ethersproject/address";
 import BigNumber from "bignumber.js";
 BigNumber.set({ DECIMAL_PLACES: 18 });
 import { provideHandleTransaction } from "./agent";
@@ -50,9 +48,6 @@ const TEST_CASES = {
     SCAM_TOKEN_2: createAddress("0xaabb77"),
     SWAP_RECIPIENT: createAddress("0xccdd88"),
 }
-
-
-
 
 export const mockCreateFinding = (tokenAddress: string, pairAddress: string, from: string, feeOnTransferFunctionCalled: string, totalAmountTransferred: string,
     actualValueReceived: string, rakedFee: BigNumber, rakedFeePercentage: string,): Finding => {
@@ -148,43 +143,48 @@ describe("Rake Scam Token Test Suite", () => {
         expect(findings).toStrictEqual([]);
     });
 
+    describe("test cases for swapExactETHForTokensSupportingFeeOnTransferTokens", () => {
+        it("should correct return finding when swapExactETHForTokensSupportingFeeOnTransferTokens function is called on Uniswap's Router contract", async () => {
 
-    it("should return finding when swapFeeOnTransferToken function is called on Uniswap's Router contract", async () => {
+            const pair = uniCreate2(TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1)
+            const [amount0In, amount1Out] = ["5000000", "3000"];
+            const actualAmount = takeFee(toBn(amount1Out), toBn(3));
 
-        const pair = uniCreate2(TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1)
-        const [amount0In, amount1Out] = ["5000000", "3000"];
-        // const swapFeeOnTransferToken = 
-        const parseTakeFee = takeFee(toBn(amount1Out), toBn(3)).toString()
-        console.log("parse__ fee__", parseTakeFee.toString())
-        txEvent = new TestTransactionEvent()
-            .addTraces({
-                to: MOCK_ROUTER,
-                function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
-                from: TEST_CASES.SWAP_RECIPIENT,
-                arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
-                value: `${amount0In}`
-            }).setFrom(TEST_CASES.SWAP_RECIPIENT)
-            .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
-            .addEventLog(...createTransferEvent(TEST_CASES.WETH, MOCK_ROUTER, pair, amount0In))
-            .addEventLog(...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, parseTakeFee.toString()))
+            txEvent = new TestTransactionEvent()
+                .addTraces({
+                    to: MOCK_ROUTER,
+                    function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
+                    from: TEST_CASES.SWAP_RECIPIENT,
+                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    value: amount0In
+                }).setFrom(TEST_CASES.SWAP_RECIPIENT)
+                .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
+                .addEventLog(...createTransferEvent(TEST_CASES.WETH, MOCK_ROUTER, pair, amount0In))
+                .addEventLog(...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, `${actualAmount}`))
 
-        const findings = await handleTransaction(txEvent);
-        console.log("findings__", findings)
+            const findings = await handleTransaction(txEvent);
 
-        expect(findings).toStrictEqual([
-            mockCreateFinding(
+            expect(findings).toStrictEqual([
+                mockCreateFinding(
                     TEST_CASES.SCAM_TOKEN_1,
                     pair,
                     TEST_CASES.SWAP_RECIPIENT,
                     "swapExactETHForTokensSupportingFeeOnTransferTokens",
                     amount1Out,
-                    parseTakeFee,
-                    toBn(amount1Out).minus(parseTakeFee),
+                    actualAmount.toString(),
+                    toBn(amount1Out).minus(actualAmount),
                     "3.00"
                 )
-          ]);
+            ]);
+
+        });
+
+      
 
     });
+
+
+ 
 
 
 });
