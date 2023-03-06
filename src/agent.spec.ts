@@ -897,5 +897,41 @@ describe("Rake Scam Token Test Suite", () => {
         ),
       ]);
     });
+
+    it("should ignore insignificant rakedFeePercentage for swapExactTokensForTokensSupportingFeeOnTransferTokens function calls on Uniswap's Router contract", async () => {
+        const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
+        const pair = uniCreate2(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_1);
+        const rakedInPercentage = 2.9; // insignificant rakedFeePercentage
+        const [initialAmount0In, actualAmount0In, initialAmount1Out, actualAmount1Out] = [
+          "9000000",
+          takeFee(toBn("9000000"), toBn(rakedInPercentage)),
+          "72000",
+          "72000",
+        ];
+  
+        const txEvent = new TestTransactionEvent()
+          .addTraces({
+            to: MOCK_ROUTER,
+            function: MOCK_IFACE_FUNCTIONS.getFunction(functionName),
+            from: TEST_CASES.SWAP_RECIPIENT,
+            arguments: [
+              initialAmount0In,
+              0,
+              [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_1],
+              TEST_CASES.SWAP_RECIPIENT,
+              ethers.BigNumber.from(1777791157),
+            ],
+          })
+          .setFrom(TEST_CASES.SWAP_RECIPIENT)
+          .addEventLog(
+            ...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.SWAP_RECIPIENT, pair, actualAmount0In.toString())
+          )
+          .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, actualAmount0In.toString(), initialAmount1Out))
+          .addEventLog(...createTransferEvent(TEST_CASES.TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, actualAmount1Out));
+  
+        const findings = await handleTransaction(txEvent);
+  
+        expect(findings).toStrictEqual([]);
+      });
   });
 });
