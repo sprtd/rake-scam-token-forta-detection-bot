@@ -116,7 +116,7 @@ describe("Rake Scam Token Test Suite", () => {
                 to: MOCK_ROUTER,
                 function: MOCK_IFACE_FUNCTIONS.getFunction("swapETHForExactTokens"),  // different function - _swap
                 from: TEST_CASES.SWAP_RECIPIENT,
-                arguments: [1854, [TEST_CASES.WETH, TEST_CASES.TOKEN_1], TEST_CASES.SWAP_RECIPIENT, 1777791157],
+                arguments: [1854, [TEST_CASES.WETH, TEST_CASES.TOKEN_1], TEST_CASES.SWAP_RECIPIENT, 1679791157],
                 value: "100"
             })
             .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
@@ -135,7 +135,7 @@ describe("Rake Scam Token Test Suite", () => {
                 to: createAddress("0xaa04"), // non-uniswap router contract
                 function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
                 from: TEST_CASES.SWAP_RECIPIENT,
-                arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                 value: `${amount0In}`
             }).setFrom(TEST_CASES.SWAP_RECIPIENT)
             .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
@@ -159,7 +159,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: amount0In
                 }).setFrom(TEST_CASES.SWAP_RECIPIENT)
                 .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
@@ -197,7 +197,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.SCAM_TOKEN_2], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.SCAM_TOKEN_2], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: pair1Amount0In
                 })
                 .setFrom(TEST_CASES.SWAP_RECIPIENT)
@@ -245,7 +245,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: amount0In
                 }).setFrom(TEST_CASES.SWAP_RECIPIENT)
                 .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
@@ -275,7 +275,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.TOKEN_3, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_4], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.TOKEN_3, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_4], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: pair1Amount0In
                 })
                 .setFrom(TEST_CASES.SWAP_RECIPIENT)
@@ -322,7 +322,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction(functionName),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [amount0In, 0, [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [amount0In, 0, [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: amount0In
                 }).setFrom(TEST_CASES.SWAP_RECIPIENT)
 
@@ -358,7 +358,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction(functionName),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [amount0In, 0, [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [amount0In, 0, [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: amount0In
                 }).setFrom(TEST_CASES.SWAP_RECIPIENT)
 
@@ -384,7 +384,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction(functionName),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [pair1Amount0In, 0, [TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [pair1Amount0In, 0, [TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                 })
                 .setFrom(TEST_CASES.SWAP_RECIPIENT)
                 .addEventLog(...createTransferEvent(TEST_CASES.TOKEN_1, TEST_CASES.SWAP_RECIPIENT, pair1, pair1Amount0In.toString()))
@@ -429,7 +429,7 @@ describe("Rake Scam Token Test Suite", () => {
                     to: mockNetworkManager.router,
                     function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
                     from: TEST_CASES.SWAP_RECIPIENT,
-                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.TOKEN_3, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_4], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    arguments: [0, [TEST_CASES.WETH, TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2, TEST_CASES.TOKEN_3, TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_4], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1679791157)],
                     value: pair1Amount0In
                 })
                 .setFrom(TEST_CASES.SWAP_RECIPIENT)
@@ -459,6 +459,45 @@ describe("Rake Scam Token Test Suite", () => {
                     rakePercent.toFixed(2)
                 )
             ]);
+        });
+    });
+
+    describe("test cases for swapExactTokensForETHSupportingFeeOnTransferTokens", () => {
+        it("should return finding when swapExactTokensForETHSupportingFeeOnTransferTokens function is called on Uniswap's Router contract", async () => {
+            const functionName = "swapExactTokensForETHSupportingFeeOnTransferTokens"
+            const pair = uniCreate2(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH)
+            const [amount0In, amount1Out] = ["5000000", "3000"];
+            const rakedInPercentage = 10
+            const actualAmount = takeFee(toBn(amount0In), toBn(rakedInPercentage));
+
+
+            const txEvent = new TestTransactionEvent()
+                .addTraces({
+                    to: MOCK_ROUTER,
+                    function: MOCK_IFACE_FUNCTIONS.getFunction(functionName),
+                    from: TEST_CASES.SWAP_RECIPIENT,
+                    arguments: [amount0In, 0, [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.WETH], TEST_CASES.SWAP_RECIPIENT, ethers.BigNumber.from(1777791157)],
+                    value: amount0In
+                }).setFrom(TEST_CASES.SWAP_RECIPIENT)
+
+                .addEventLog(...createSwapEvent(pair, UNISWAP_V2_ROUTER, amount0In, amount1Out))
+                .addEventLog(...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.SWAP_RECIPIENT, pair, `${actualAmount}`))
+
+            const findings = await handleTransaction(txEvent);
+
+            expect(findings).toStrictEqual([
+                mockCreateFinding(
+                    TEST_CASES.SCAM_TOKEN_1,
+                    pair,
+                    TEST_CASES.SWAP_RECIPIENT,
+                    functionName,
+                    amount0In,
+                    actualAmount.toString(),
+                    toBn(amount0In).minus(actualAmount),
+                    rakedInPercentage.toFixed(2),
+                )
+            ]);
+
         });
     });
 });
