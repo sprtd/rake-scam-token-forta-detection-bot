@@ -18,7 +18,7 @@ This bot detects scam tokens which significantly takes additional swap fee on Un
 
 Describe each of the type of alerts fired by this agent
 
-- GITCOIN-FORTA-1
+- RAKE-TOKEN-CONTRACT-1
   - Fired when a token takes significant percentage fee on Uniswap Router and transfers it to an EOA
   - Severity is always set to "low" 
   - Type is always set to "info"
