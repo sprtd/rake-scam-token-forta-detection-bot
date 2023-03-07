@@ -10,8 +10,9 @@ This bot detects scam tokens which significantly takes additional swap fee on Un
 - Polygon
 - Arbitrum
 - Optimism
-- Celo
-
+- Avalanche
+- Fantom
+- BNBChain
 
 ## Alerts
 

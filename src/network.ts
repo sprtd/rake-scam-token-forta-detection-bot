@@ -35,8 +35,22 @@ const OPTIMISM_MAINNET_DATA: NetworkData = {
   pairInitCodeHash: UNISWAP_PAIR_INIT_CODE_HASH,
 };
 
-const CELO_MAINNET_DATA: NetworkData = {
+const AVALANCHE_DATA: NetworkData = {
+  chainId: 43114,
+  factory: UNISWAP_V2_FACTORY,
+  router: UNISWAP_V2_ROUTER,
+  pairInitCodeHash: UNISWAP_PAIR_INIT_CODE_HASH,
+};
+
+const FANTOM_DATA: NetworkData = {
   chainId: 42220,
+  factory: UNISWAP_V2_FACTORY,
+  router: UNISWAP_V2_ROUTER,
+  pairInitCodeHash: UNISWAP_PAIR_INIT_CODE_HASH,
+};
+
+const BNBCHAIN_DATA: NetworkData = {
+  chainId: 56,
   factory: UNISWAP_V2_FACTORY,
   router: UNISWAP_V2_ROUTER,
   pairInitCodeHash: UNISWAP_PAIR_INIT_CODE_HASH,
@@ -47,7 +61,9 @@ export const NETWORK_MAP: Record<number, NetworkData> = {
   137: POLYGON_MAINNET_DATA,
   42161: ARBITRUM_MAINNET_DATA,
   10: OPTIMISM_MAINNET_DATA,
-  42220: CELO_MAINNET_DATA,
+  43114: AVALANCHE_DATA,
+  250: FANTOM_DATA,
+  56: BNBCHAIN_DATA
 };
 
 export default class NetworkManager implements NetworkData {

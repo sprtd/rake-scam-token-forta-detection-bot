@@ -14,7 +14,7 @@ export const createFinding = (
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
     description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
-    alertId: "GITCOIN-FORTA-1",
+    alertId: "RAKE-TOKEN-CONTRACT-1",
     severity: FindingSeverity.Info,
     type: FindingType.Info,
     protocol: "GitcoinForta",
