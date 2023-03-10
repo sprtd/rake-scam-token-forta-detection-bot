@@ -1,7 +1,7 @@
 import { ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, UNISWAP_V2_ROUTER } from "./constants";
+import { THRESHOLD_PERCENTAGE, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, UNISWAP_V2_ROUTER } from "./constants";
 import { LogDescription, Finding } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
@@ -66,7 +66,7 @@ const checkForFinding = (
   txName: string
 ): Finding[] => {
   const rakedInPercentage = initialAmountIn.minus(actualAmountIn).div(initialAmountIn).multipliedBy(100);
-  if (rakedInPercentage.gte(THRESHOLD_PERCENT))
+  if (rakedInPercentage.gte(THRESHOLD_PERCENTAGE))
     return [
       createFinding(
         tokenAddress,

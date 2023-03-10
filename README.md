@@ -49,3 +49,6 @@ The bot behaviour can be verified with the following transactions:
 - [0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1](https://etherscan.io/tx/0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1) -
 `Ethereum Mainnet - swapExactTokensForTokensSupportingFeeOnTransferTokens`
   > Raked Fee Percentage -  5.75%
+
+
+- The default THRESHOLD_PERCENTAGE to detect findings is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGE` variable in `src/constants.ts - #L24` 
