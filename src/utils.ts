@@ -1,7 +1,7 @@
 import { ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENTAGE, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, UNISWAP_V2_ROUTER } from "./constants";
+import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, UNISWAP_V2_ROUTER } from "./constants";
 import { LogDescription, Finding } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
@@ -11,6 +11,10 @@ BigNumber.set({ DECIMAL_PLACES: 18 });
 export const toBn = (ethersBn: BigNumberish) => new BigNumber(ethersBn.toString());
 
 export const lCase = (address: string): string => address.toLowerCase();
+export let TOTAL_FINDINGS = 0
+export let RAKE_TOKEN_ADDRESSES: string[] = []
+
+
 
 // generate new pair address
 export const uniCreate2 = (t0: string, t1: string, factory: string = UNISWAP_V2_FACTORY): string => {
@@ -66,7 +70,13 @@ const checkForFinding = (
   txName: string
 ): Finding[] => {
   const rakedInPercentage = initialAmountIn.minus(actualAmountIn).div(initialAmountIn).multipliedBy(100);
-  if (rakedInPercentage.gte(THRESHOLD_PERCENTAGE))
+  if (rakedInPercentage.gte(THRESHOLD_PERCENT)) {
+    TOTAL_FINDINGS ++;
+    if(!RAKE_TOKEN_ADDRESSES.includes(tokenAddress)) {
+      RAKE_TOKEN_ADDRESSES.push(tokenAddress)
+    }
+    let anomalyScore = TOTAL_FINDINGS/RAKE_TOKEN_ADDRESSES.length
+    console.log("anomaly score__", anomalyScore)
     return [
       createFinding(
         tokenAddress,
@@ -76,10 +86,13 @@ const checkForFinding = (
         initialAmountIn.toString(),
         actualAmountIn.toString(),
         initialAmountIn.minus(actualAmountIn),
-        rakedInPercentage.toFixed(2)
+        rakedInPercentage.toFixed(2), 
+        anomalyScore.toString(), 
       ),
     ];
+  }
   return [];
+    
 };
 
 const executeExactTokenForEthFeeOnTransfer = (
@@ -87,7 +100,7 @@ const executeExactTokenForEthFeeOnTransfer = (
   transferEvents: LogDescription[],
   swapEvents: LogDescription[],
   txFrom: string,
-  finding: Finding[],
+  finding: Finding[], 
   router: string
 ) => {
   let actualAmountIn: BigNumber, initialAmountIn: BigNumber, to: string, pairAddress: string;
@@ -99,8 +112,10 @@ const executeExactTokenForEthFeeOnTransfer = (
     pairAddress = uniCreate2(path[i], path[i + 1]);
     to = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : router;
     [actualAmountIn] = parseTransferEvents(transferEvents, tokenSender, pairAddress, path[i]);
+    
 
     finding.push(...checkForFinding(initialAmountIn, actualAmountIn, path[i], pairAddress, txFrom, txDescription.name));
+
     [initialAmountIn] = parseSwapEvents(swapEvents, to, pairAddress);
     tokenSender = pairAddress;
   }
@@ -164,7 +179,7 @@ export const filterFunctionAndEvent = (
   txDescription: TransactionDescription,
   swapEvents: LogDescription[],
   transferEvents: LogDescription[],
-  txFrom: string,
+  txFrom: string, 
   router: string
 ): Finding[] => {
   let findings: Finding[] = [];

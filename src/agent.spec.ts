@@ -36,6 +36,9 @@ const MOCK_IFACE_EVENTS: ethers.utils.Interface = new ethers.utils.Interface([
   TOKEN_TRANSFER_EVENT,
 ]);
 
+let MOCK_RAKE_TOKEN_ADDRESSES: string[] = []
+let MOCK_TOTAL_FINDINGS: number = 0
+
 const createSwapEvent = (
   pairAddress: string,
   to: string,
@@ -79,8 +82,14 @@ export const mockCreateFinding = (
   totalAmountTransferred: string,
   actualValueReceived: string,
   rakedFee: BigNumber,
-  rakedFeePercentage: string
+  rakedFeePercentage: string, 
 ): Finding => {
+  MOCK_TOTAL_FINDINGS ++;
+  if(!MOCK_RAKE_TOKEN_ADDRESSES.includes(tokenAddress)) {
+    MOCK_RAKE_TOKEN_ADDRESSES.push(tokenAddress)
+  }
+  let anomalyScore = MOCK_TOTAL_FINDINGS/MOCK_RAKE_TOKEN_ADDRESSES.length;
+
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
     description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
@@ -96,6 +105,7 @@ export const mockCreateFinding = (
       actualValueReceived,
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
+      anomalyScore: anomalyScore.toString()
     },
   });
 };
@@ -211,7 +221,7 @@ describe("Rake Scam Token Test Suite", () => {
         );
 
       const findings = await handleTransaction(txEvent);
-
+      
       expect(findings).toStrictEqual([
         mockCreateFinding(
           TEST_CASES.SCAM_TOKEN_1,
@@ -221,7 +231,7 @@ describe("Rake Scam Token Test Suite", () => {
           amount1Out,
           actualAmount.toString(),
           toBn(amount1Out).minus(actualAmount),
-          rakedFeePercentage.toFixed(2)
+          rakedFeePercentage.toFixed(2),
         ),
       ]);
     });
@@ -273,6 +283,7 @@ describe("Rake Scam Token Test Suite", () => {
 
       const findings = await handleTransaction(txEvent);
       const functionName = "swapExactETHForTokensSupportingFeeOnTransferTokens";
+      const anomalyScore = 
       expect(findings).toStrictEqual([
         mockCreateFinding(
           TEST_CASES.SCAM_TOKEN_1,
@@ -282,7 +293,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair1Amount1Out,
           pair2Amount0In.toString(),
           toBn(pair1Amount1Out).minus(pair2Amount0In),
-          scam1RakedPercent.toFixed(2)
+          scam1RakedPercent.toFixed(2),
         ),
         mockCreateFinding(
           TEST_CASES.SCAM_TOKEN_2,
@@ -292,7 +303,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair3Amount1Out,
           actualPair3AmountSent,
           toBn(pair3Amount1Out).minus(actualPair3AmountSent),
-          scam2RakedPercent.toFixed(2)
+          scam2RakedPercent.toFixed(2), 
         ),
       ]);
     });
@@ -403,7 +414,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair4Amount1Out,
           pair5Amount0In.toString(),
           toBn(pair4Amount1Out).minus(pair5Amount0In),
-          rakePercent.toFixed(2)
+          rakePercent.toFixed(2), 
         ),
       ]);
     });
@@ -490,7 +501,7 @@ describe("Rake Scam Token Test Suite", () => {
           amount0In,
           actualAmount.toString(),
           toBn(amount0In).minus(actualAmount),
-          rakedInPercentage.toFixed(2)
+          rakedInPercentage.toFixed(2), 
         ),
       ]);
     });
@@ -576,7 +587,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair2Amount1Out,
           pair3Amount0In.toString(),
           toBn(pair2Amount1Out).minus(pair3Amount0In),
-          rakedFeePercentage.toFixed(2)
+          rakedFeePercentage.toFixed(2),
         ),
       ]);
     });
@@ -657,7 +668,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair4Amount1Out,
           pair5Amount0In.toString(),
           toBn(pair4Amount1Out).minus(pair5Amount0In),
-          rakePercent.toFixed(2)
+          rakePercent.toFixed(2),
         ),
       ]);
     });
@@ -706,7 +717,7 @@ describe("Rake Scam Token Test Suite", () => {
           initialAmount0In,
           actualAmount0In.toString(),
           toBn(initialAmount0In).minus(actualAmount0In),
-          rakedInPercentage.toFixed(2)
+          rakedInPercentage.toFixed(2),
         ),
       ]);
     });
@@ -808,7 +819,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair2Amount1Out,
           pair3Amount0In.toString(),
           toBn(pair2Amount1Out).minus(pair3Amount0In),
-          rakedFeePercentage.toFixed(2)
+          rakedFeePercentage.toFixed(2),
         ),
       ]);
     });
@@ -900,7 +911,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair2Amount1Out,
           pair3Amount0In.toString(),
           toBn(pair2Amount1Out).minus(pair3Amount0In),
-          rakedFeePercentage1.toFixed(2)
+          rakedFeePercentage1.toFixed(2),
         ),
         mockCreateFinding(
           TEST_CASES.SCAM_TOKEN_2,
@@ -910,7 +921,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair5Amount1Out,
           actualPair5Amount1Out.toString(),
           toBn(pair5Amount1Out).minus(actualPair5Amount1Out),
-          rakedFeePercentage2.toFixed(2)
+          rakedFeePercentage2.toFixed(2),
         ),
       ]);
     });

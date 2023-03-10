@@ -9,7 +9,8 @@ export const createFinding = (
   totalAmountTransferred: string,
   actualValueReceived: string,
   rakedFee: BigNumber,
-  rakedFeePercentage: string
+  rakedFeePercentage: string,
+  anomalyScore: string,
 ): Finding => {
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
@@ -26,6 +27,7 @@ export const createFinding = (
       actualValueReceived,
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
+      anomalyScore,
     },
   });
 };

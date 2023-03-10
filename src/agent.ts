@@ -1,6 +1,6 @@
 import { Finding, HandleTransaction, TransactionEvent, getEthersProvider, ethers } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
-import { filterFunctionAndEvent } from "./utils";
+import { filterFunctionAndEvent, TOTAL_FINDINGS, RAKE_TOKEN_ADDRESSES } from "./utils";
 import NetworkManager, { NETWORK_MAP } from "./network";
 import NetworkData from "./network";
 
@@ -21,6 +21,7 @@ export const provideInitialize = (provider: ethers.providers.Provider) => async 
   const { chainId } = await provider.getNetwork();
   networkManager.setNetwork(chainId);
 };
+
 
 export const provideHandleTransaction = (
   functionAbi: string[],

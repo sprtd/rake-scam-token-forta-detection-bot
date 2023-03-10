@@ -30,6 +30,7 @@ Describe each of the type of alerts fired by this agent
     - actualAmountReceived: amount received by the user executing the swap following the deduction of swap fee
     - rakedFee: total fee taken by scam token contract
     - rakedFeePercentage: percentage of the fee raked in by the scam token contract
+    - anomalyScore: total finding count divided by total unique rake token addresses captured
 
 ## Test Data
 
