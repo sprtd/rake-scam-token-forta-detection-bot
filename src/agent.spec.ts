@@ -19,7 +19,6 @@ import NetworkData from "./network";
 const MOCK_OTHER_FUNCTION: string = "function _swap(uint[] memory amounts, address[] memory path, address _to)";
 const MOCK_FACTORY: string = createAddress("0xaaa0000");
 const MOCK_INIT_CODE_HASH: string = keccak256(MOCK_FACTORY);
-
 const MOCK_ROUTER: string = createAddress("0xbebe111000");
 const MOCK_SWAP_EXACT_TOKENS_FOR_TOKENS =
   "function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)";
@@ -408,6 +407,47 @@ describe("Rake Scam Token Test Suite", () => {
         ),
       ]);
     });
+    // it("simulates a situation whereby the scam token contract transfer function calls uniswap router to swap the accrued fee", async () => {
+    //     const pair = uniCreate2(TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1);
+    //     const [amount0In, amount1Out] = ["5000000", "3000"];
+    //     const rakedFeePercentage = 3;
+    //     const actualAmount = takeFee(toBn(amount1Out), toBn(rakedFeePercentage));
+  
+    //     const txEvent = new TestTransactionEvent()
+    //       .addTraces({
+    //         to: MOCK_ROUTER,
+    //         function: MOCK_IFACE_FUNCTIONS.getFunction("swapExactETHForTokensSupportingFeeOnTransferTokens"),
+    //         from: TEST_CASES.SWAP_RECIPIENT,
+    //         arguments: [
+    //           0,
+    //           [TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1],
+    //           TEST_CASES.SWAP_RECIPIENT,
+    //           ethers.BigNumber.from(1777791157),
+    //         ],
+    //         value: amount0In,
+    //       })
+    //       .setFrom(TEST_CASES.SWAP_RECIPIENT)
+    //       .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, amount0In, amount1Out))
+    //       .addEventLog(...createTransferEvent(TEST_CASES.WETH, MOCK_ROUTER, pair, amount0In))
+    //       .addEventLog(
+    //         ...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, `${actualAmount}`)
+    //       );
+  
+    //     const findings = await handleTransaction(txEvent);
+  
+    //     expect(findings).toStrictEqual([
+    //       mockCreateFinding(
+    //         TEST_CASES.SCAM_TOKEN_1,
+    //         pair,
+    //         TEST_CASES.SWAP_RECIPIENT,
+    //         "swapExactETHForTokensSupportingFeeOnTransferTokens",
+    //         amount1Out,
+    //         actualAmount.toString(),
+    //         toBn(amount1Out).minus(actualAmount),
+    //         rakedFeePercentage.toFixed(2)
+    //       ),
+    //     ]);
+    //   });
   });
 
   describe("SwapExactTokensForETHSupportingFeeOnTransferTokens", () => {

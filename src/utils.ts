@@ -87,7 +87,8 @@ const executeExactTokenForEthFeeOnTransfer = (
   transferEvents: LogDescription[],
   swapEvents: LogDescription[],
   txFrom: string,
-  finding: Finding[]
+  finding: Finding[],
+  router: string
 ) => {
   let actualAmountIn: BigNumber, initialAmountIn: BigNumber, to: string, pairAddress: string;
   initialAmountIn = toBn(txDescription.args.amountIn);
@@ -96,7 +97,7 @@ const executeExactTokenForEthFeeOnTransfer = (
   let tokenSender: string = lCase(txFrom);
   for (let i = 0; i < path.length - 1; i++) {
     pairAddress = uniCreate2(path[i], path[i + 1]);
-    to = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : UNISWAP_V2_ROUTER;
+    to = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : router;
     [actualAmountIn] = parseTransferEvents(transferEvents, tokenSender, pairAddress, path[i]);
 
     finding.push(...checkForFinding(initialAmountIn, actualAmountIn, path[i], pairAddress, txFrom, txDescription.name));
@@ -163,12 +164,13 @@ export const filterFunctionAndEvent = (
   txDescription: TransactionDescription,
   swapEvents: LogDescription[],
   transferEvents: LogDescription[],
-  txFrom: string
+  txFrom: string,
+  router: string
 ): Finding[] => {
   let findings: Finding[] = [];
   switch (txDescription.name) {
     case "swapExactTokensForETHSupportingFeeOnTransferTokens": {
-      executeExactTokenForEthFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
+      executeExactTokenForEthFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings, router);
       break;
     }
     case "swapExactETHForTokensSupportingFeeOnTransferTokens": {

@@ -51,4 +51,4 @@ The bot behaviour can be verified with the following transactions:
   > Raked Fee Percentage -  5.75%
 
 
-- The default THRESHOLD_PERCENTAGE to detect findings is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGE` variable in `src/constants.ts - #L24` 
+- The default THRESHOLD_PERCENTAGEAGE to detect findings is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGEAGE` variable in `src/constants.ts - #L24` 

@@ -35,7 +35,7 @@ export const provideHandleTransaction = (
     const txTransferEventLog = txEvent.filterLog(tokenTransferEvent);
     const txSwapEventLog = txEvent.filterLog(swapEvent);
     txFunction.forEach((func) => {
-      findings.push(...filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog, txEvent.from));
+      findings.push(...filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog, txEvent.from, networkManager.router));
     });
     return findings;
   };
