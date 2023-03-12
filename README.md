@@ -31,6 +31,8 @@ Describe each of the type of alerts fired by this agent
     - rakedFee: total fee taken by scam token contract
     - rakedFeePercentage: percentage of the fee raked in by the scam token contract
     - anomalyScore: total finding count divided by total unique rake token addresses captured
+    - deployer: address of the rake token deployer
+    - rakeTokenDeployTxHash: transaction hash of the deployed rake token
 
 ## Test Data
 
