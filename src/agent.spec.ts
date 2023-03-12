@@ -39,8 +39,6 @@ const MOCK_IFACE_EVENTS: ethers.utils.Interface = new ethers.utils.Interface([
 let MOCK_RAKE_TOKEN_ADDRESSES: string[] = []
 let MOCK_TOTAL_FINDINGS: number = 0
 
-
-
 const createSwapEvent = (
   pairAddress: string,
   to: string,
