@@ -1,11 +1,17 @@
 import { ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
+import axios from "axios";
 import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, UNISWAP_V2_ROUTER } from "./constants";
 import { LogDescription, Finding } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
+import * as dotenv from 'dotenv' ;
+dotenv.config();
+
+const { GET_DEPLOYER_ENDPOINT, API_KEY } = process.env
+
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
 export const toBn = (ethersBn: BigNumberish) => new BigNumber(ethersBn.toString());
@@ -61,24 +67,47 @@ const parseSwapEvents = (swapEvents: LogDescription[], swapRecipient: string, em
   return [initialAmountOut, actualAmountIn];
 };
 
-const checkForFinding = (
+const getApiUrl = (tokenAddress: string): string =>
+  `${GET_DEPLOYER_ENDPOINT}${tokenAddress}&apikey=${API_KEY}`
+  
+export const getDeployerAndTxHash = async (tokenAddress: string) => {
+  let contractCreator: string, txHash: string;
+  contractCreator = txHash = "";
+  try {
+    let {data} = await axios.get(getApiUrl(tokenAddress));
+    if (data?.status === '1'){
+      contractCreator = data.result[0].contractCreator;
+      txHash = data.result[0].txHash;
+    } else {
+      console.log("Etherscan query error: ", data?.message);
+    }
+    
+  } catch (error) {
+    console.log ("Failed to fetch token deployer", error);
+  }
+  return {contractCreator, txHash};
+}
+
+
+const checkForFinding = async (
   initialAmountIn: BigNumber,
   actualAmountIn: BigNumber,
   tokenAddress: string,
   pairAddress: string,
   txFrom: string,
   txName: string
-): Finding[] => {
+): Promise<Finding[]> => {
   const rakedInPercentage = initialAmountIn.minus(actualAmountIn).div(initialAmountIn).multipliedBy(100);
   if (rakedInPercentage.gte(THRESHOLD_PERCENT)) {
-    TOTAL_FINDINGS ++;
-    if(!RAKE_TOKEN_ADDRESSES.includes(tokenAddress)) {
-      RAKE_TOKEN_ADDRESSES.push(tokenAddress)
+    TOTAL_FINDINGS++;
+    if (!RAKE_TOKEN_ADDRESSES.includes(tokenAddress)) {
+      RAKE_TOKEN_ADDRESSES.push(tokenAddress);
     }
-    let anomalyScore = TOTAL_FINDINGS/RAKE_TOKEN_ADDRESSES.length
+    let anomalyScore = TOTAL_FINDINGS / RAKE_TOKEN_ADDRESSES.length;
     console.log("anomaly score__", anomalyScore)
+
     return [
-      createFinding(
+      await createFinding(
         tokenAddress,
         pairAddress,
         txFrom,
@@ -86,21 +115,21 @@ const checkForFinding = (
         initialAmountIn.toString(),
         actualAmountIn.toString(),
         initialAmountIn.minus(actualAmountIn),
-        rakedInPercentage.toFixed(2), 
-        anomalyScore.toString(), 
+        rakedInPercentage.toFixed(2),
+        anomalyScore.toString(),
       ),
     ];
   }
   return [];
-    
+
 };
 
-const executeExactTokenForEthFeeOnTransfer = (
+const executeExactTokenForEthFeeOnTransfer = async (
   txDescription: TransactionDescription,
   transferEvents: LogDescription[],
   swapEvents: LogDescription[],
   txFrom: string,
-  finding: Finding[], 
+  finding: Finding[],
   router: string
 ) => {
   let actualAmountIn: BigNumber, initialAmountIn: BigNumber, to: string, pairAddress: string;
@@ -112,16 +141,16 @@ const executeExactTokenForEthFeeOnTransfer = (
     pairAddress = uniCreate2(path[i], path[i + 1]);
     to = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : router;
     [actualAmountIn] = parseTransferEvents(transferEvents, tokenSender, pairAddress, path[i]);
-    
 
-    finding.push(...checkForFinding(initialAmountIn, actualAmountIn, path[i], pairAddress, txFrom, txDescription.name));
+
+    finding.push(...await checkForFinding(initialAmountIn, actualAmountIn, path[i], pairAddress, txFrom, txDescription.name));
 
     [initialAmountIn] = parseSwapEvents(swapEvents, to, pairAddress);
     tokenSender = pairAddress;
   }
 };
 
-const executeExactETHForTokensFeeOnTransfer = (
+const executeExactETHForTokensFeeOnTransfer = async (
   txDescription: TransactionDescription,
   transferEvents: LogDescription[],
   swapEvents: LogDescription[],
@@ -146,12 +175,12 @@ const executeExactETHForTokensFeeOnTransfer = (
       [, actualAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
     }
     finding.push(
-      ...checkForFinding(initialAmountIn, actualAmountIn, path[i], prevPairAddress, txFrom, txDescription.name)
+      ...await checkForFinding(initialAmountIn, actualAmountIn, path[i], prevPairAddress, txFrom, txDescription.name)
     );
   }
 };
 
-const executeExactTokensForTokensFeeOnTransfer = (
+const executeExactTokensForTokensFeeOnTransfer = async(
   txDescription: TransactionDescription,
   transferEvents: LogDescription[],
   swapEvents: LogDescription[],
@@ -170,30 +199,30 @@ const executeExactTokensForTokensFeeOnTransfer = (
       pairAddress = uniCreate2(path[i], path[i + 1]);
       [, actualAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
     }
-    finding.push(...checkForFinding(initialAmountIn, actualAmountIn, path[i], pairAddress, txFrom, txDescription.name));
+    finding.push(...await checkForFinding(initialAmountIn, actualAmountIn, path[i], pairAddress, txFrom, txDescription.name));
     [initialAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
   }
 };
 
-export const filterFunctionAndEvent = (
+export const filterFunctionAndEvent = async (
   txDescription: TransactionDescription,
   swapEvents: LogDescription[],
   transferEvents: LogDescription[],
-  txFrom: string, 
+  txFrom: string,
   router: string
-): Finding[] => {
+): Promise<Finding[]> => {
   let findings: Finding[] = [];
   switch (txDescription.name) {
     case "swapExactTokensForETHSupportingFeeOnTransferTokens": {
-      executeExactTokenForEthFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings, router);
+      await executeExactTokenForEthFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings, router);
       break;
     }
     case "swapExactETHForTokensSupportingFeeOnTransferTokens": {
-      executeExactETHForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
+      await executeExactETHForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
       break;
     }
     case "swapExactTokensForTokensSupportingFeeOnTransferTokens": {
-      executeExactTokensForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
+      await executeExactTokensForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txFrom, findings);
       break;
     }
   }

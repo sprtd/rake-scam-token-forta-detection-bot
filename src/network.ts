@@ -8,7 +8,7 @@ export interface NetworkData {
 }
 
 const MAINNET_DATA: NetworkData = {
-  chainId: 42,
+  chainId: 1,
   factory: UNISWAP_V2_FACTORY,
   router: UNISWAP_V2_ROUTER,
   pairInitCodeHash: UNISWAP_PAIR_INIT_CODE_HASH,
