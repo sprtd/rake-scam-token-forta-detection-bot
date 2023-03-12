@@ -30,9 +30,9 @@ Describe each of the type of alerts fired by this agent
     - actualAmountReceived: amount received by the user executing the swap following the deduction of swap fee
     - rakedFee: total fee taken by scam token contract
     - rakedFeePercentage: percentage of the fee raked in by the scam token contract
-    - anomalyScore: total finding count divided by total unique rake token addresses captured
-    - deployer: address of the rake token deployer
-    - rakeTokenDeployTxHash: transaction hash of the deployed rake token
+    - anomalyScore: total finding count divided by total unique rake token addresses detected
+    - deployer: address of the rake token contract deployer
+    - rakeTokenDeployTxHash: transaction hash of the deployed rake token contract
 
 ## Test Data
 
@@ -54,4 +54,4 @@ The bot behaviour can be verified with the following transactions:
   > Raked Fee Percentage -  5.75%
 
 
-- The default THRESHOLD_PERCENTAGEAGE to detect findings is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGEAGE` variable in `src/constants.ts - #L24` 
+- This bot's default THRESHOLD_PERCENTAGEAGE to detect findings is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGEAGE` variable in `src/constants.ts - #L24` 

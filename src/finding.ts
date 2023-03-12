@@ -3,9 +3,9 @@
 
 import BigNumber from "bignumber.js";
 import { Finding, FindingSeverity, FindingType } from "forta-agent";
-import {getDeployerAndTxHash } from "./utils";
+import { getDeployerAndTxHash } from "./utils";
 
-export const createFinding = async(
+export const createFinding = async (
   tokenAddress: string,
   pairAddress: string,
   from: string,
@@ -17,7 +17,7 @@ export const createFinding = async(
   anomalyScore: string,
 ): Promise<Finding> => {
   console.log(200);
-  let { contractCreator, txHash} = await getDeployerAndTxHash(tokenAddress);
+  let { contractCreator, txHash } = await getDeployerAndTxHash(tokenAddress);
 
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
@@ -35,9 +35,9 @@ export const createFinding = async(
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
       anomalyScore,
-      rakeTokenDeployer : contractCreator,
-      rakeTokenDeployTxHash : txHash
-      
+      rakeTokenDeployer: contractCreator,
+      rakeTokenDeployTxHash: txHash
+
     },
   });
 };

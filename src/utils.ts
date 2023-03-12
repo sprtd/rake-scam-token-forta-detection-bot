@@ -1,14 +1,15 @@
+import * as dotenv from 'dotenv' ;
+dotenv.config();
 import { ethers } from "forta-agent";
+import fetch from "node-fetch"
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import axios from "axios";
 import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, UNISWAP_V2_ROUTER } from "./constants";
 import { LogDescription, Finding } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
-import * as dotenv from 'dotenv' ;
-dotenv.config();
+
 
 const { GET_DEPLOYER_ENDPOINT, API_KEY } = process.env
 
@@ -74,7 +75,10 @@ export const getDeployerAndTxHash = async (tokenAddress: string) => {
   let contractCreator: string, txHash: string;
   contractCreator = txHash = "";
   try {
-    let {data} = await axios.get(getApiUrl(tokenAddress));
+    let response = await fetch(getApiUrl(tokenAddress), {
+      method: "GET"
+    });
+    const data = await response.json()
     if (data?.status === '1'){
       contractCreator = data.result[0].contractCreator;
       txHash = data.result[0].txHash;
@@ -85,6 +89,7 @@ export const getDeployerAndTxHash = async (tokenAddress: string) => {
   } catch (error) {
     console.log ("Failed to fetch token deployer", error);
   }
+ 
   return {contractCreator, txHash};
 }
 

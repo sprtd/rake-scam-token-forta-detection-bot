@@ -4,7 +4,9 @@ import { TestTransactionEvent } from "forta-agent-tools/lib/test";
 import { keccak256 } from "forta-agent/dist/sdk/utils";
 import BigNumber from "bignumber.js";
 BigNumber.set({ DECIMAL_PLACES: 18 });
+import axios from "axios"
 import { provideHandleTransaction } from "./agent";
+import { getDeployerAndTxHash } from "./utils"
 import { uniCreate2, toBn } from "./utils";
 import {
   SWAP_EXACT_TOKEN_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
@@ -56,10 +58,10 @@ const createTransferEvent = (
   to: string,
   value: string
 ): [ethers.utils.EventFragment, string, any[]] => [
-  MOCK_IFACE_EVENTS.getEvent("Transfer"),
-  emittingAddress,
-  [from, to, value],
-];
+    MOCK_IFACE_EVENTS.getEvent("Transfer"),
+    emittingAddress,
+    [from, to, value],
+  ];
 
 const takeFee = (amount: BigNumber, percentage: BigNumber) =>
   amount.minus(percentage.dividedBy(100).multipliedBy(amount));
@@ -76,7 +78,7 @@ const TEST_CASES = {
 };
 
 
-export const mockCreateFinding = (
+const mockCreateFinding = (
   tokenAddress: string,
   pairAddress: string,
   from: string,
@@ -84,13 +86,17 @@ export const mockCreateFinding = (
   totalAmountTransferred: string,
   actualValueReceived: string,
   rakedFee: BigNumber,
-  rakedFeePercentage: string, 
+  rakedFeePercentage: string,
 ): Finding => {
-  MOCK_TOTAL_FINDINGS ++;
-  if(!MOCK_RAKE_TOKEN_ADDRESSES.includes(tokenAddress)) {
+  MOCK_TOTAL_FINDINGS++;
+  if (!MOCK_RAKE_TOKEN_ADDRESSES.includes(tokenAddress)) {
     MOCK_RAKE_TOKEN_ADDRESSES.push(tokenAddress)
   }
-  let anomalyScore = MOCK_TOTAL_FINDINGS/MOCK_RAKE_TOKEN_ADDRESSES.length;
+  let anomalyScore = MOCK_TOTAL_FINDINGS / MOCK_RAKE_TOKEN_ADDRESSES.length;
+
+  // axios.get.mockResolvedValue({
+
+  // })
 
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
@@ -107,7 +113,9 @@ export const mockCreateFinding = (
       actualValueReceived,
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
-      anomalyScore: anomalyScore.toString()
+      anomalyScore: anomalyScore.toString(), 
+      rakeTokenDeployer: createAddress("0xdd"), 
+      rakeTokenDeployTxHash: keccak256(tokenAddress)
     },
   });
 };
@@ -125,6 +133,7 @@ describe("Rake Scam Token Test Suite", () => {
   let handleTransaction: HandleTransaction;
 
   beforeAll(() => {
+    jest.mock('axios');
     handleTransaction = provideHandleTransaction(
       [
         SWAP_EXACT_TOKEN_FOR_ETH_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
@@ -196,7 +205,7 @@ describe("Rake Scam Token Test Suite", () => {
   });
 
   describe("SwapExactETHForTokensSupportingFeeOnTransferTokens", () => {
-    it("should correct return finding when swapExactETHForTokensSupportingFeeOnTransferTokens function is called on Uniswap's Router contract", async () => {
+    it.only("should correct return finding when swapExactETHForTokensSupportingFeeOnTransferTokens function is called on Uniswap's Router contract", async () => {
       const pair = uniCreate2(TEST_CASES.WETH, TEST_CASES.SCAM_TOKEN_1);
       const [amount0In, amount1Out] = ["5000000", "3000"];
       const rakedFeePercentage = 3;
@@ -223,7 +232,7 @@ describe("Rake Scam Token Test Suite", () => {
         );
 
       const findings = await handleTransaction(txEvent);
-      
+
       expect(findings).toStrictEqual([
         mockCreateFinding(
           TEST_CASES.SCAM_TOKEN_1,
@@ -252,14 +261,14 @@ describe("Rake Scam Token Test Suite", () => {
         pair3Amount1Out,
         actualPair3AmountSent,
       ] = [
-        "5000000",
-        "143570000",
-        takeFee(toBn(143570000), toBn(scam1RakedPercent)),
-        "9070000",
-        "9070000",
-        "23980000",
-        takeFee(toBn(23980000), toBn(scam2RakedPercent)).toString(),
-      ];
+          "5000000",
+          "143570000",
+          takeFee(toBn(143570000), toBn(scam1RakedPercent)),
+          "9070000",
+          "9070000",
+          "23980000",
+          takeFee(toBn(23980000), toBn(scam2RakedPercent)).toString(),
+        ];
       const txEvent = new TestTransactionEvent()
         .addTraces({
           to: mockNetworkManager.router,
@@ -285,29 +294,29 @@ describe("Rake Scam Token Test Suite", () => {
 
       const findings = await handleTransaction(txEvent);
       const functionName = "swapExactETHForTokensSupportingFeeOnTransferTokens";
-      const anomalyScore = 
-      expect(findings).toStrictEqual([
-        mockCreateFinding(
-          TEST_CASES.SCAM_TOKEN_1,
-          pair1,
-          TEST_CASES.SWAP_RECIPIENT,
-          functionName,
-          pair1Amount1Out,
-          pair2Amount0In.toString(),
-          toBn(pair1Amount1Out).minus(pair2Amount0In),
-          scam1RakedPercent.toFixed(2),
-        ),
-        mockCreateFinding(
-          TEST_CASES.SCAM_TOKEN_2,
-          pair3,
-          TEST_CASES.SWAP_RECIPIENT,
-          functionName,
-          pair3Amount1Out,
-          actualPair3AmountSent,
-          toBn(pair3Amount1Out).minus(actualPair3AmountSent),
-          scam2RakedPercent.toFixed(2), 
-        ),
-      ]);
+      const anomalyScore =
+        expect(findings).toStrictEqual([
+          mockCreateFinding(
+            TEST_CASES.SCAM_TOKEN_1,
+            pair1,
+            TEST_CASES.SWAP_RECIPIENT,
+            functionName,
+            pair1Amount1Out,
+            pair2Amount0In.toString(),
+            toBn(pair1Amount1Out).minus(pair2Amount0In),
+            scam1RakedPercent.toFixed(2),
+          ),
+          mockCreateFinding(
+            TEST_CASES.SCAM_TOKEN_2,
+            pair3,
+            TEST_CASES.SWAP_RECIPIENT,
+            functionName,
+            pair3Amount1Out,
+            actualPair3AmountSent,
+            toBn(pair3Amount1Out).minus(actualPair3AmountSent),
+            scam2RakedPercent.toFixed(2),
+          ),
+        ]);
     });
 
     it("should return empty finding when fee taken on transfer isn't significant", async () => {
@@ -360,17 +369,17 @@ describe("Rake Scam Token Test Suite", () => {
         pair5Amount0In,
         pair5Amount1Out,
       ] = [
-        "5000000",
-        "143570000",
-        "143570000",
-        "570000",
-        "570000",
-        "77770",
-        "77770",
-        "1000000",
-        takeFee(toBn(1000000), toBn(rakePercent)),
-        "950000",
-      ];
+          "5000000",
+          "143570000",
+          "143570000",
+          "570000",
+          "570000",
+          "77770",
+          "77770",
+          "1000000",
+          takeFee(toBn(1000000), toBn(rakePercent)),
+          "950000",
+        ];
 
       const txEvent = new TestTransactionEvent()
         .addTraces({
@@ -416,7 +425,7 @@ describe("Rake Scam Token Test Suite", () => {
           pair4Amount1Out,
           pair5Amount0In.toString(),
           toBn(pair4Amount1Out).minus(pair5Amount0In),
-          rakePercent.toFixed(2), 
+          rakePercent.toFixed(2),
         ),
       ]);
     });
@@ -425,7 +434,7 @@ describe("Rake Scam Token Test Suite", () => {
     //     const [amount0In, amount1Out] = ["5000000", "3000"];
     //     const rakedFeePercentage = 3;
     //     const actualAmount = takeFee(toBn(amount1Out), toBn(rakedFeePercentage));
-  
+
     //     const txEvent = new TestTransactionEvent()
     //       .addTraces({
     //         to: MOCK_ROUTER,
@@ -445,9 +454,9 @@ describe("Rake Scam Token Test Suite", () => {
     //       .addEventLog(
     //         ...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, `${actualAmount}`)
     //       );
-  
+
     //     const findings = await handleTransaction(txEvent);
-  
+
     //     expect(findings).toStrictEqual([
     //       mockCreateFinding(
     //         TEST_CASES.SCAM_TOKEN_1,
@@ -503,7 +512,7 @@ describe("Rake Scam Token Test Suite", () => {
           amount0In,
           actualAmount.toString(),
           toBn(amount0In).minus(actualAmount),
-          rakedInPercentage.toFixed(2), 
+          rakedInPercentage.toFixed(2),
         ),
       ]);
     });
@@ -614,17 +623,17 @@ describe("Rake Scam Token Test Suite", () => {
         pair5Amount0In,
         pair5Amount1Out,
       ] = [
-        "5000000",
-        "143570000",
-        "143570000",
-        "570000",
-        "570000",
-        "77770",
-        "77770",
-        "1000000",
-        takeFee(toBn(1000000), toBn(rakePercent)),
-        "950000",
-      ];
+          "5000000",
+          "143570000",
+          "143570000",
+          "570000",
+          "570000",
+          "77770",
+          "77770",
+          "1000000",
+          takeFee(toBn(1000000), toBn(rakePercent)),
+          "950000",
+        ];
 
       const txEvent = new TestTransactionEvent()
         .addTraces({
@@ -774,14 +783,14 @@ describe("Rake Scam Token Test Suite", () => {
         pair3Amount1Out,
         actualPair3Amount1Out,
       ] = [
-        "8000000",
-        "143570000",
-        "143570000",
-        "9070000",
-        takeFee(toBn(9070000), toBn(rakedFeePercentage)),
-        "23980000",
-        "23980000",
-      ];
+          "8000000",
+          "143570000",
+          "143570000",
+          "9070000",
+          takeFee(toBn(9070000), toBn(rakedFeePercentage)),
+          "23980000",
+          "23980000",
+        ];
       const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
 
       const txEvent = new TestTransactionEvent()
@@ -847,18 +856,18 @@ describe("Rake Scam Token Test Suite", () => {
         pair5Amount1Out,
         actualPair5Amount1Out,
       ] = [
-        "8000000",
-        "143570000",
-        "143570000",
-        "9070000",
-        takeFee(toBn(9070000), toBn(rakedFeePercentage1)),
-        "4874000000",
-        "4874000000",
-        "66900000",
-        "66900000",
-        "43000",
-        takeFee(toBn(43000), toBn(rakedFeePercentage2)),
-      ];
+          "8000000",
+          "143570000",
+          "143570000",
+          "9070000",
+          takeFee(toBn(9070000), toBn(rakedFeePercentage1)),
+          "4874000000",
+          "4874000000",
+          "66900000",
+          "66900000",
+          "43000",
+          takeFee(toBn(43000), toBn(rakedFeePercentage2)),
+        ];
       const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
 
       const txEvent = new TestTransactionEvent()
