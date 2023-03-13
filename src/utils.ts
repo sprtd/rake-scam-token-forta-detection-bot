@@ -68,31 +68,9 @@ const parseSwapEvents = (swapEvents: LogDescription[], swapRecipient: string, em
   return [initialAmountOut, actualAmountIn];
 };
 
-const getApiUrl = (tokenAddress: string): string =>
+export const getApiUrl = (tokenAddress: string): string =>
   `${GET_DEPLOYER_ENDPOINT}${tokenAddress}&apikey=${API_KEY}`
   
-export const getDeployerAndTxHash = async (tokenAddress: string) => {
-  let contractCreator: string, txHash: string;
-  contractCreator = txHash = "";
-  try {
-    let response = await fetch(getApiUrl(tokenAddress), {
-      method: "GET"
-    });
-    const data = await response.json()
-    if (data?.status === '1'){
-      contractCreator = data.result[0].contractCreator;
-      txHash = data.result[0].txHash;
-    } else {
-      console.log("Etherscan query error: ", data?.message);
-    }
-    
-  } catch (error) {
-    console.log ("Failed to fetch token deployer", error);
-  }
- 
-  return {contractCreator, txHash};
-}
-
 
 const checkForFinding = async (
   initialAmountIn: BigNumber,
@@ -122,6 +100,7 @@ const checkForFinding = async (
         initialAmountIn.minus(actualAmountIn),
         rakedInPercentage.toFixed(2),
         anomalyScore.toString(),
+
       ),
     ];
   }

@@ -30,13 +30,13 @@ export const provideHandleTransaction = (
   tokenTransferEvent: string
 ): HandleTransaction => {
   return async (txEvent: TransactionEvent): Promise<Finding[]> => {
-    const txFunction: TransactionDescription[] = txEvent.filterFunction(functionAbi, networkManager.router);
+    const txDescriptions: TransactionDescription[] = txEvent.filterFunction(functionAbi, networkManager.router);
     const findings: Finding[] = [];
-    if (!txFunction) return findings;
-    const txTransferEventLog = txEvent.filterLog(tokenTransferEvent);
-    const txSwapEventLog = txEvent.filterLog(swapEvent);
-    for (let func of txFunction) {
-      findings.push(...await filterFunctionAndEvent(func, txSwapEventLog, txTransferEventLog, txEvent.from, networkManager.router));
+    if (!txDescriptions) return findings;
+    const txTransferEventLogs = txEvent.filterLog(tokenTransferEvent);
+    const txSwapEventLogs = txEvent.filterLog(swapEvent);
+    for (let txDescription of txDescriptions) {
+      findings.push(...await filterFunctionAndEvent(txDescription, txSwapEventLogs, txTransferEventLogs, txEvent.from, networkManager.router));
     }
     return findings;
   };
