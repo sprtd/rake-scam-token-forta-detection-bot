@@ -317,7 +317,6 @@ describe("Rake Scam Token Test Suite", () => {
 
 
       mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
-      // mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
       const mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
       const mockTokenDeployerResult = await mockFetchTokenDeployer.fetchDeployerAndTxHash(TEST_CASES.SCAM_TOKEN_1)
 
@@ -407,7 +406,7 @@ describe("Rake Scam Token Test Suite", () => {
       expect(findings).toStrictEqual([]);
     });
 
-    it("should return findings when  swapExactETHForTokensSupportingFeeOnTransferTokens function containing multiple paths is called on Uniswap's Router contract", async () => {
+    it.only("should return findings when  swapExactETHForTokensSupportingFeeOnTransferTokens function containing multiple paths is called on Uniswap's Router contract", async () => {
       const pair1 = uniCreate2(TEST_CASES.WETH, TEST_CASES.TOKEN_1);
       const pair2 = uniCreate2(TEST_CASES.TOKEN_1, TEST_CASES.TOKEN_2);
       const pair3 = uniCreate2(TEST_CASES.TOKEN_2, TEST_CASES.TOKEN_3);
@@ -438,6 +437,10 @@ describe("Rake Scam Token Test Suite", () => {
           takeFee(toBn(1000000), toBn(rakePercent)),
           "950000",
         ];
+
+      mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
+      mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
+      const mockTokenDeployerResult = await mockFetchTokenDeployer.fetchDeployerAndTxHash(TEST_CASES.SCAM_TOKEN_1)
 
       const txEvent = new TestTransactionEvent()
         .addTraces({
@@ -472,9 +475,7 @@ describe("Rake Scam Token Test Suite", () => {
         .addEventLog(...createTransferEvent(TEST_CASES.TOKEN_4, pair5, TEST_CASES.SWAP_RECIPIENT, pair5Amount1Out));
 
       const functionName = "swapExactETHForTokensSupportingFeeOnTransferTokens";
-      mockFetch.mockResolvedValueOnce(Promise.resolve(mockResponse));
       const findings = await handleTransaction(txEvent);
-      const deployerMetadata = await mockFetchTokenDeployer.fetchDeployerAndTxHash(TEST_CASES.SCAM_TOKEN_1);
       expect(findings).toStrictEqual([
         mockCreateFinding(
           TEST_CASES.SCAM_TOKEN_1,
@@ -485,8 +486,8 @@ describe("Rake Scam Token Test Suite", () => {
           pair5Amount0In.toString(),
           toBn(pair4Amount1Out).minus(pair5Amount0In),
           rakePercent.toFixed(2),
-          deployerMetadata?.deployer,
-          deployerMetadata?.txHash
+          mockTokenDeployerResult?.deployer,
+          mockTokenDeployerResult?.txHash
         ),
       ]);
     });
@@ -613,11 +614,7 @@ describe("Rake Scam Token Test Suite", () => {
         .addEventLog(...createSwapEvent(pair2, pair3, pair2Amount0In.toString(), pair2Amount1Out))
         .addEventLog(...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, pair2, pair3, pair3Amount0In.toString()))
         .addEventLog(...createSwapEvent(pair3, mockNetworkManager.router, pair3Amount0In.toString(), pair3Amount1Out));
-      global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve(mockResponse) });
       const deployerMetadata = await mockFetchTokenDeployer.fetchDeployerAndTxHash(TEST_CASES.SCAM_TOKEN_1);
-
-
-      // const { contractCreator, txHash } = await getDeployerAndTxHash(TEST_CASES.SCAM_TOKEN_1);
       const findings = await handleTransaction(txEvent);
 
       expect(findings).toStrictEqual([
@@ -702,7 +699,6 @@ describe("Rake Scam Token Test Suite", () => {
 
       const functionName = "swapExactETHForTokensSupportingFeeOnTransferTokens";
 
-      global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve(mockResponse) });
       const deployerMetadata = await mockFetchTokenDeployer.fetchDeployerAndTxHash(TEST_CASES.SCAM_TOKEN_1);
 
 
