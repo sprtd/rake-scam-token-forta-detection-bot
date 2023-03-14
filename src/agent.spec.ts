@@ -120,7 +120,7 @@ export const mockCreateFinding = (
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
       anomalyScore: anomalyScore.toString(),
-      attacker_rake_token_deployer: rakeTokenDeployer,
+      attackerRakeTokenDeployer: rakeTokenDeployer,
       rakeTokenDeployTxHash,
     },
   });

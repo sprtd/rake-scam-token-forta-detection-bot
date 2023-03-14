@@ -31,7 +31,7 @@ export const createFinding = async (
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
       anomalyScore,
-      attacker_rake_token_deployer: deployerAndTxHash?.deployer,
+      attackerRakeTokenDeployer: deployerAndTxHash?.deployer,
       rakeTokenDeployTxHash: deployerAndTxHash?.txHash,
     },
   });
