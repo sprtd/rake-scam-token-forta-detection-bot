@@ -22,7 +22,6 @@ export const provideInitialize = (provider: ethers.providers.Provider) => async 
   networkManager.setNetwork(chainId);
 };
 
-
 export const provideHandleTransaction = (
   functionAbi: string[],
   networkManager: NetworkData,
@@ -41,6 +40,7 @@ export const provideHandleTransaction = (
     return findings;
   };
 };
+
 
 export default {
   initialize: provideInitialize(getEthersProvider()),

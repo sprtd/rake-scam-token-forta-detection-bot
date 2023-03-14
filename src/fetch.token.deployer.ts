@@ -9,14 +9,13 @@ export class FetchTokenDeployer {
     this.rakeTokenAddress = rakeTokenAddress;
   }
 
-  async fetchDeployerAndTxHash(tokenAddress: string) {
+  async fetchDeployerAndTxHash() {
     try {
+      const tokenAddress = this.rakeTokenAddress
       const url: string = getApiUrl(tokenAddress)
       const response = await fetch(url, {
         method: "GET"
       });
-
-      console.log("http response__", response)
       const data = await response.json()
       console.log("http data__", data)
       if (data?.status === '1') {
@@ -29,7 +28,6 @@ export class FetchTokenDeployer {
       } else {
         console.log("Etherscan query error: ", data?.message);
       }
-
     } catch (error) {
       console.log("Failed to fetch token deployer", error);
     }

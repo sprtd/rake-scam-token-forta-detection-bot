@@ -18,7 +18,7 @@ export const createFinding = async (
   anomalyScore: string,
 ): Promise<Finding> => {
   let fetchTokenDeployer = new FetchTokenDeployer(tokenAddress)
-  const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash(tokenAddress)
+  const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash()
   console.log("deployer", deployerAndTxHash)
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
