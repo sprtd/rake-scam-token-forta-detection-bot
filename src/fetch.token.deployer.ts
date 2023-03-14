@@ -1,9 +1,9 @@
-import fetch from "node-fetch"
-import { getApiUrl } from "./utils"
+import fetch from "node-fetch";
+import { getApiUrl } from "./utils";
 export class FetchTokenDeployer {
   rakeTokenAddress: string;
-  deployer: any
-  txHash: any
+  deployer: any;
+  txHash: any;
 
   constructor(rakeTokenAddress: string) {
     this.rakeTokenAddress = rakeTokenAddress;
@@ -11,20 +11,19 @@ export class FetchTokenDeployer {
 
   async fetchDeployerAndTxHash() {
     try {
-      const tokenAddress = this.rakeTokenAddress
-      const url: string = getApiUrl(tokenAddress)
+      const tokenAddress = this.rakeTokenAddress;
+      const url: string = getApiUrl(tokenAddress);
       const response = await fetch(url, {
-        method: "GET"
+        method: "GET",
       });
-      const data = await response.json()
-      console.log("http data__", data)
-      if (data?.status === '1') {
+      const data = await response.json();
+      if (data?.status === "1") {
         this.deployer = data.result[0].contractCreator;
         this.txHash = data.result[0].txHash;
         return {
           deployer: this.deployer,
-          txHash: this.txHash
-        }
+          txHash: this.txHash,
+        };
       } else {
         console.log("Etherscan query error: ", data?.message);
       }
@@ -32,5 +31,4 @@ export class FetchTokenDeployer {
       console.log("Failed to fetch token deployer", error);
     }
   }
-
 }

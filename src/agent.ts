@@ -35,12 +35,19 @@ export const provideHandleTransaction = (
     const txTransferEventLogs = txEvent.filterLog(tokenTransferEvent);
     const txSwapEventLogs = txEvent.filterLog(swapEvent);
     for (let txDescription of txDescriptions) {
-      findings.push(...await filterFunctionAndEvent(txDescription, txSwapEventLogs, txTransferEventLogs, txEvent.from, networkManager.router));
+      findings.push(
+        ...(await filterFunctionAndEvent(
+          txDescription,
+          txSwapEventLogs,
+          txTransferEventLogs,
+          txEvent.from,
+          networkManager.router
+        ))
+      );
     }
     return findings;
   };
 };
-
 
 export default {
   initialize: provideInitialize(getEthersProvider()),

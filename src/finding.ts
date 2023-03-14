@@ -1,6 +1,3 @@
-
-
-
 import BigNumber from "bignumber.js";
 import { Finding, FindingSeverity, FindingType } from "forta-agent";
 // import {getDeployerAndTxHash } from "./utils";
@@ -15,11 +12,10 @@ export const createFinding = async (
   actualValueReceived: string,
   rakedFee: BigNumber,
   rakedFeePercentage: string,
-  anomalyScore: string,
+  anomalyScore: string
 ): Promise<Finding> => {
-  let fetchTokenDeployer = new FetchTokenDeployer(tokenAddress)
-  const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash()
-  console.log("deployer", deployerAndTxHash)
+  let fetchTokenDeployer = new FetchTokenDeployer(tokenAddress);
+  const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
     description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
@@ -37,8 +33,7 @@ export const createFinding = async (
       rakedFeePercentage,
       anomalyScore,
       rakeTokenDeployer: deployerAndTxHash?.deployer,
-      rakeTokenDeployTxHash: deployerAndTxHash?.txHash
-
+      rakeTokenDeployTxHash: deployerAndTxHash?.txHash,
     },
   });
 };

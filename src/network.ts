@@ -63,7 +63,7 @@ export const NETWORK_MAP: Record<number, NetworkData> = {
   10: OPTIMISM_MAINNET_DATA,
   43114: AVALANCHE_DATA,
   250: FANTOM_DATA,
-  56: BNBCHAIN_DATA
+  56: BNBCHAIN_DATA,
 };
 
 export default class NetworkManager implements NetworkData {
