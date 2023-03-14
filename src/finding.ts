@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { Finding, FindingSeverity, FindingType } from "forta-agent";
-// import {getDeployerAndTxHash } from "./utils";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
 
 export const createFinding = async (
@@ -32,7 +31,7 @@ export const createFinding = async (
       rakedFee: rakedFee.toString(),
       rakedFeePercentage,
       anomalyScore,
-      rakeTokenDeployer: deployerAndTxHash?.deployer,
+      attacker_rake_token_deployer: deployerAndTxHash?.deployer,
       rakeTokenDeployTxHash: deployerAndTxHash?.txHash,
     },
   });
