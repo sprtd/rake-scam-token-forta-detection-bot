@@ -1,4 +1,4 @@
-import { FindingType, FindingSeverity, Finding, HandleTransaction, ethers } from "forta-agent";
+import { FindingType, FindingSeverity, Finding, HandleTransaction, ethers, EntityType } from "forta-agent";
 import { createAddress } from "forta-agent-tools/lib/utils";
 import { TestTransactionEvent } from "forta-agent-tools/lib/test";
 import { keccak256 } from "forta-agent/dist/sdk/utils";
@@ -20,10 +20,6 @@ import {
 } from "./constants";
 import NetworkData from "./network";
 
-const mockData = {
-  status: "1",
-  result: [{ contractCreator: createAddress("0xddd"), txHash: keccak256(createAddress("0x999e")) }],
-};
 
 const MOCK_OTHER_FUNCTION: string = "function _swap(uint[] memory amounts, address[] memory path, address _to)";
 const MOCK_FACTORY: string = createAddress("0xaaa0000");
@@ -67,10 +63,10 @@ const createTransferEvent = (
   to: string,
   value: string
 ): [ethers.utils.EventFragment, string, any[]] => [
-  MOCK_IFACE_EVENTS.getEvent("Transfer"),
-  emittingAddress,
-  [from, to, value],
-];
+    MOCK_IFACE_EVENTS.getEvent("Transfer"),
+    emittingAddress,
+    [from, to, value],
+  ];
 
 const takeFee = (amount: BigNumber, percentage: BigNumber) =>
   amount.minus(percentage.dividedBy(100).multipliedBy(amount));
@@ -85,6 +81,18 @@ const TEST_CASES = {
   SCAM_TOKEN_2: createAddress("0xaabb77"),
   SWAP_RECIPIENT: createAddress("0xccdd88"),
 };
+const mockRakeTokenDeployer = createAddress("0xdede");
+const mockRakeTokenDeployTx = keccak256(createAddress("0x999e"));
+let mockFetchTokenDeployer: FetchTokenDeployer;
+
+const mockData = {
+  status: "1",
+  result: [{ contractCreator: mockRakeTokenDeployer, txHash: mockRakeTokenDeployTx }],
+};
+
+const mockFetchResponse: Response = ({
+  json: jest.fn().mockResolvedValue(mockData),
+} as any) as Response;
 
 export const mockCreateFinding = (
   tokenAddress: string,
@@ -123,6 +131,17 @@ export const mockCreateFinding = (
       attackerRakeTokenDeployer: rakeTokenDeployer,
       rakeTokenDeployTxHash,
     },
+
+    labels: mockRakeTokenDeployer ? [
+      {
+        entityType: EntityType.Address,
+        entity: mockRakeTokenDeployer,
+        label: "attacker",
+        confidence: 0.9,
+        remove: false,
+      },
+    ]
+      : undefined,
   });
 };
 
@@ -135,25 +154,10 @@ const mockNetworkManager: NetworkData = {
   setNetwork: jest.fn(),
 };
 
-const mockResponse = {
-  status: "1",
-  result: [{ contractCreator: createAddress("0xddd"), txHash: keccak256(createAddress("0x999e")) }],
-};
-
 describe("Rake Scam Token Test Suite", () => {
   let handleTransaction: HandleTransaction;
   let mockFetch: any;
-  const mockRakeTokenDeployer = createAddress("0xdede");
-  const mockRakeTokenDeployTx = keccak256(createAddress("0x999e"));
-  let mockFetchTokenDeployer: FetchTokenDeployer;
-  const mockData = {
-    status: "1",
-    result: [{ contractCreator: mockRakeTokenDeployer, txHash: mockRakeTokenDeployTx }],
-  };
 
-  const mockFetchResponse: Response = ({
-    json: jest.fn().mockResolvedValue(mockData),
-  } as any) as Response;
 
   beforeAll(() => {
     handleTransaction = provideHandleTransaction(
@@ -289,16 +293,17 @@ describe("Rake Scam Token Test Suite", () => {
         pair3Amount1Out,
         actualPair3AmountSent,
       ] = [
-        "5000000",
-        "143570000",
-        takeFee(toBn(143570000), toBn(scam1RakedPercent)),
-        "9070000",
-        "9070000",
-        "23980000",
-        takeFee(toBn(23980000), toBn(scam2RakedPercent)).toString(),
-      ];
+          "5000000",
+          "143570000",
+          takeFee(toBn(143570000), toBn(scam1RakedPercent)),
+          "9070000",
+          "9070000",
+          "23980000",
+          takeFee(toBn(23980000), toBn(scam2RakedPercent)).toString(),
+        ];
 
       const functionName = "swapExactETHForTokensSupportingFeeOnTransferTokens";
+
       mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
       const mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
       const mockTokenDeployerResult = await mockFetchTokenDeployer.fetchDeployerAndTxHash();
@@ -406,17 +411,17 @@ describe("Rake Scam Token Test Suite", () => {
         pair5Amount0In,
         pair5Amount1Out,
       ] = [
-        "5000000",
-        "143570000",
-        "143570000",
-        "570000",
-        "570000",
-        "77770",
-        "77770",
-        "1000000",
-        takeFee(toBn(1000000), toBn(rakePercent)),
-        "950000",
-      ];
+          "5000000",
+          "143570000",
+          "143570000",
+          "570000",
+          "570000",
+          "77770",
+          "77770",
+          "1000000",
+          takeFee(toBn(1000000), toBn(rakePercent)),
+          "950000",
+        ];
 
       mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
       mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
@@ -636,17 +641,17 @@ describe("Rake Scam Token Test Suite", () => {
         pair5Amount0In,
         pair5Amount1Out,
       ] = [
-        "5000000",
-        "143570000",
-        "143570000",
-        "570000",
-        "570000",
-        "77770",
-        "77770",
-        "1000000",
-        takeFee(toBn(1000000), toBn(rakePercent)),
-        "950000",
-      ];
+          "5000000",
+          "143570000",
+          "143570000",
+          "570000",
+          "570000",
+          "77770",
+          "77770",
+          "1000000",
+          takeFee(toBn(1000000), toBn(rakePercent)),
+          "950000",
+        ];
 
       mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
       mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
@@ -808,14 +813,14 @@ describe("Rake Scam Token Test Suite", () => {
         pair3Amount1Out,
         actualPair3Amount1Out,
       ] = [
-        "8000000",
-        "143570000",
-        "143570000",
-        "9070000",
-        takeFee(toBn(9070000), toBn(rakedFeePercentage)),
-        "23980000",
-        "23980000",
-      ];
+          "8000000",
+          "143570000",
+          "143570000",
+          "9070000",
+          takeFee(toBn(9070000), toBn(rakedFeePercentage)),
+          "23980000",
+          "23980000",
+        ];
       const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
       mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
       mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
@@ -886,18 +891,18 @@ describe("Rake Scam Token Test Suite", () => {
         pair5Amount1Out,
         actualPair5Amount1Out,
       ] = [
-        "8000000",
-        "143570000",
-        "143570000",
-        "9070000",
-        takeFee(toBn(9070000), toBn(rakedFeePercentage1)),
-        "4874000000",
-        "4874000000",
-        "66900000",
-        "66900000",
-        "43000",
-        takeFee(toBn(43000), toBn(rakedFeePercentage2)),
-      ];
+          "8000000",
+          "143570000",
+          "143570000",
+          "9070000",
+          takeFee(toBn(9070000), toBn(rakedFeePercentage1)),
+          "4874000000",
+          "4874000000",
+          "66900000",
+          "66900000",
+          "43000",
+          takeFee(toBn(43000), toBn(rakedFeePercentage2)),
+        ];
       const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
       mockFetch.mockResolvedValue(Promise.resolve(mockFetchResponse));
       mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);

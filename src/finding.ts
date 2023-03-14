@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Finding, FindingSeverity, FindingType } from "forta-agent";
+import { EntityType, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
 
 export const createFinding = async (
@@ -34,5 +34,17 @@ export const createFinding = async (
       attackerRakeTokenDeployer: deployerAndTxHash?.deployer,
       rakeTokenDeployTxHash: deployerAndTxHash?.txHash,
     },
+    labels: deployerAndTxHash?.deployer
+      ? [
+          {
+            entityType: EntityType.Address,
+            entity: deployerAndTxHash?.deployer,
+            label: "attacker",
+            confidence: 0.9,
+            remove: false,
+          },
+        ]
+      : undefined,
   });
 };
+//
