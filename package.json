@@ -1,7 +1,7 @@
 {
   "name": "rake-scam-token-detection-bot",
   "version": "0.0.1",
-  "description": "Detects the deployment of rake scam tokens",
+  "description": "Detects rake scam tokens which significantly take additional swap fee on Uniswap DEX and transfers it to an EOA",
   "repository": "https://github.com/sprtd/rake-scam-token-forta-detection-bot.git",
   "chainIds": [
     1,
