@@ -85,9 +85,10 @@ const checkForFinding = async (
       RAKE_TOKEN_ADDRESSES.push(tokenAddress);
     }
     let anomalyScore = TOTAL_FINDINGS / RAKE_TOKEN_ADDRESSES.length;
+    console.log('raked in percentage__', rakedInPercentage.toString())
     return [
       await createFinding(
-        tokenAddress,
+        lCase(tokenAddress),
         pairAddress,
         txFrom,
         txName,
