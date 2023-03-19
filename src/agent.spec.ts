@@ -931,6 +931,82 @@ describe("Rake Scam Token Test Suite", () => {
       ]);
     });
 
+    it("should return correct finding when swapExactTokensForTokensSupportingFeeOnTransferTokens function is called on Uniswap's Router contract and raked fee is transferred to an EOA", async () => {
+      const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
+      const pair = uniCreate2(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_1);
+      const rakedFeePercentage = 7;
+      const [initialAmount0In, actualAmount0In, initialAmount1Out, actualAmount1Out] = [
+        "9000000",
+        takeFee(toBn("9000000"), toBn(rakedFeePercentage)),
+        "72000",
+        "72000",
+      ];
+
+      const mockData = {
+        status: "1",
+        result: [
+          {
+            contractCreator: mockRakeTokenDeployer,
+            txHash: mockRakeTokenDeployTx,
+            to: mockRakeTokenDeployer,
+            from: TEST_CASES.SCAM_TOKEN_1,
+            value: "500721829252661777",
+          },
+        ],
+      };
+      const mockResponse: Response = ({
+        json: jest.fn().mockResolvedValue(mockData),
+      } as any) as Response;
+
+      mockFetch.mockResolvedValue(Promise.resolve(mockResponse));
+      mockFetchTokenDeployer = new FetchTokenDeployer(TEST_CASES.SCAM_TOKEN_1);
+      const mockTokenDeployerResult = await mockFetchTokenDeployer.fetchDeployerAndTxHash();
+
+      const txEvent = new TestTransactionEvent()
+        .setTo(mockNetworkManager.router)
+        .addTraces({
+          to: mockNetworkManager.router,
+          function: MOCK_IFACE_FUNCTIONS.getFunction(functionName),
+          from: TEST_CASES.SWAP_RECIPIENT,
+          arguments: [
+            initialAmount0In,
+            0,
+            [TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_1],
+            TEST_CASES.SWAP_RECIPIENT,
+            ethers.BigNumber.from(1777791157),
+          ],
+        })
+        .setFrom(TEST_CASES.SWAP_RECIPIENT)
+        .addEventLog(
+          ...createTransferEvent(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.SWAP_RECIPIENT, pair, actualAmount0In.toString())
+        )
+        .addEventLog(...createSwapEvent(pair, TEST_CASES.SWAP_RECIPIENT, actualAmount0In.toString(), initialAmount1Out))
+        .addEventLog(...createTransferEvent(TEST_CASES.TOKEN_1, pair, TEST_CASES.SWAP_RECIPIENT, actualAmount1Out));
+      const mockRakeFeeRecipient = await mockFetchTokenDeployer.fetchRakeFeeRecipient(txEvent.hash);
+
+      const findings = await handleTransaction(txEvent);
+
+
+      expect(findings).toStrictEqual([
+        mockCreateFinding(
+          TEST_CASES.SCAM_TOKEN_1,
+          pair,
+          TEST_CASES.SWAP_RECIPIENT,
+          functionName,
+          initialAmount0In,
+          actualAmount0In.toString(),
+          toBn(initialAmount0In).minus(actualAmount0In),
+          rakedFeePercentage.toFixed(2),
+          mockTokenDeployerResult?.deployer,
+          mockTokenDeployerResult?.deployTxHash,
+          {
+            to: mockRakeFeeRecipient[0].to,
+            value: mockRakeFeeRecipient[0].value,
+          }
+        ),
+      ]);
+    });
+
     it("should ignore insignificant rakedFeePercentage for swapExactTokensForTokensSupportingFeeOnTransferTokens function calls on Uniswap's Router contract", async () => {
       const functionName = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
       const pair = uniCreate2(TEST_CASES.SCAM_TOKEN_1, TEST_CASES.TOKEN_1);
