@@ -23,7 +23,7 @@ Describe each of the type of alerts fired by this agent
   - Severity is always set to "low" 
   - Type is always set to "info"
   - Metadata contains the following fields: 
-    - tokenAddress: address of the deployed rake scam token
+    - rakeTokenAddress: address of the rake scam token
     - pairAddress: address of the created uniswap tokens pair
     - from: address of the user initiating the swap transaction on Uniswap
     - totalAmountTransferred: total amount of scam tokens transferred to Uniswap Router contract
