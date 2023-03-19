@@ -1,10 +1,12 @@
 import BigNumber from "bignumber.js";
-import { EntityType, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
+import { EntityType, ethers, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
+import { returnOnlyMatchingRakeFeeRecipient } from "./utils";
 
 export const createFinding = async (
-  tokenAddress: string,
+  rakeTokenAddress: string,
   pairAddress: string,
+  txHash: string,
   from: string,
   feeOnTransferFunctionCalled: string,
   totalAmountTransferred: string,
@@ -13,8 +15,35 @@ export const createFinding = async (
   rakedFeePercentage: string,
   anomalyScore: string
 ): Promise<Finding> => {
-  let fetchTokenDeployer = new FetchTokenDeployer(tokenAddress);
+  let fetchTokenDeployer = new FetchTokenDeployer(rakeTokenAddress);
   const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
+  const fetchedRakeFeeRecipient = await fetchTokenDeployer.fetchRakeFeeRecipient(txHash);
+  let matchingRakeFeeRecipient: any[] = [];
+  if(fetchedRakeFeeRecipient)
+   matchingRakeFeeRecipient = returnOnlyMatchingRakeFeeRecipient(fetchedRakeFeeRecipient, rakeTokenAddress);
+
+  let metadata: any = {
+    rakeTokenAddress,
+    pairAddress,
+    from,
+    totalAmountTransferred,
+    actualValueReceived,
+    rakedFee: rakedFee.toString(),
+    rakedFeePercentage,
+    anomalyScore,
+    attackerRakeTokenDeployer: deployerAndTxHash?.deployer,
+    rakeTokenDeployTxHash: deployerAndTxHash?.deployTxHash,
+  };
+
+  let rakeFeeRecipient = "",
+    ethTransferredToRakeFeeRecipient = "";
+
+  if (matchingRakeFeeRecipient?.length) {
+    rakeFeeRecipient = matchingRakeFeeRecipient[0];
+    ethTransferredToRakeFeeRecipient = ethers.utils.formatEther(matchingRakeFeeRecipient[1]);
+    metadata = { ...metadata, rakeFeeRecipient, ethTransferredToRakeFeeRecipient };
+  }
+
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
     description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
@@ -22,29 +51,17 @@ export const createFinding = async (
     severity: FindingSeverity.Info,
     type: FindingType.Info,
     protocol: "GitcoinForta",
-    metadata: {
-      tokenAddress,
-      pairAddress,
-      from,
-      totalAmountTransferred,
-      actualValueReceived,
-      rakedFee: rakedFee.toString(),
-      rakedFeePercentage,
-      anomalyScore,
-      attackerRakeTokenDeployer: deployerAndTxHash?.deployer,
-      rakeTokenDeployTxHash: deployerAndTxHash?.txHash,
-    },
+    metadata,
     labels: deployerAndTxHash?.deployer
       ? [
-          {
-            entityType: EntityType.Address,
-            entity: deployerAndTxHash?.deployer,
-            label: "attacker",
-            confidence: 0.9,
-            remove: false,
-          },
-        ]
+        {
+          entityType: EntityType.Address,
+          entity: deployerAndTxHash?.deployer,
+          label: "attacker",
+          confidence: 0.9,
+          remove: false,
+        },
+      ]
       : undefined,
   });
 };
-//

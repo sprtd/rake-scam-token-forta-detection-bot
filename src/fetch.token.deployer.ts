@@ -1,9 +1,10 @@
 import fetch from "node-fetch";
-import { getApiUrl } from "./utils";
+import { getApiUrl, getInternalApiUrl } from "./utils";
 export class FetchTokenDeployer {
   rakeTokenAddress: string;
   deployer: any;
-  txHash: any;
+  deployTxHash: any;
+  feeRecipient: any;
 
   constructor(rakeTokenAddress: string) {
     this.rakeTokenAddress = rakeTokenAddress;
@@ -19,16 +20,35 @@ export class FetchTokenDeployer {
       const data = await response.json();
       if (data?.status === "1") {
         this.deployer = data.result[0].contractCreator;
-        this.txHash = data.result[0].txHash;
+        this.deployTxHash = data.result[0].txHash;
         return {
           deployer: this.deployer,
-          txHash: this.txHash,
+          deployTxHash: this.deployTxHash,
         };
       } else {
-        console.log("Etherscan query error: ", data?.message);
+        console.log("Etherscan fetch deployer and txHash query error: ", data?.message);
       }
     } catch (error) {
-      console.log("Failed to fetch token deployer", error);
+      console.log("Failed to fetch token deployer: ", error);
+    }
+  }
+
+  async fetchRakeFeeRecipient(hash: string) {
+    try {
+      const url: string = getInternalApiUrl(hash);
+      const response = await fetch(url, {
+        method: "GET",
+      });
+
+      const data = await response.json();
+      if (data?.status === "1") {
+        this.feeRecipient = data.result;
+        return this.feeRecipient;
+      } else {
+        console.log("Etherscan fetch rake fee recipient query error: ", data?.message);
+      }
+    } catch (error) {
+      console.log("Failed to fetch raked fee recipient: ", error);
     }
   }
 }

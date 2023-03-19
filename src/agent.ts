@@ -1,6 +1,6 @@
 import { Finding, HandleTransaction, TransactionEvent, getEthersProvider, ethers } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
-import { filterFunctionAndEvent, TOTAL_FINDINGS, RAKE_TOKEN_ADDRESSES } from "./utils";
+import { filterFunctionAndEvent, lCase } from "./utils";
 import NetworkManager, { NETWORK_MAP } from "./network";
 import NetworkData from "./network";
 
@@ -15,6 +15,7 @@ import {
 import BigNumber from "bignumber.js";
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
+export let TOTAL_TOKEN_ADDRESSES = 0;
 const networkManager = new NetworkManager(NETWORK_MAP);
 
 export const provideInitialize = (provider: ethers.providers.Provider) => async () => {
@@ -29,6 +30,7 @@ export const provideHandleTransaction = (
   tokenTransferEvent: string
 ): HandleTransaction => {
   return async (txEvent: TransactionEvent): Promise<Finding[]> => {
+    if (txEvent.to === lCase(networkManager.router)) TOTAL_TOKEN_ADDRESSES++;
     const txDescriptions: TransactionDescription[] = txEvent.filterFunction(functionAbi, networkManager.router);
     const findings: Finding[] = [];
     if (!txDescriptions) return findings;
@@ -41,6 +43,7 @@ export const provideHandleTransaction = (
           txSwapEventLogs,
           txTransferEventLogs,
           txEvent.from,
+          txEvent.hash,
           networkManager.router
         ))
       );
