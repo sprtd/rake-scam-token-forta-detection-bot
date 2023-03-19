@@ -33,6 +33,8 @@ Describe each of the type of alerts fired by this agent
     - anomalyScore: total finding count divided by total unique rake token addresses detected
     - attackerRakeTokenDeployer: address of the rake token contract deployer
     - rakeTokenDeployTxHash: transaction hash of the deployed rake token contract
+    - rakeFeeRecipient: address to which the rake fee is transferred
+    - ethTransferredToRakeFeeRecipient: ETH value transferred to rake fee recipient
 
 ## Test Data
 
