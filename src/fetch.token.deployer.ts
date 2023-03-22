@@ -14,6 +14,7 @@ export class FetchTokenDeployer {
     try {
       const tokenAddress = this.rakeTokenAddress;
       const url: string = getApiUrl(tokenAddress);
+    
       const response = await fetch(url, {
         method: "GET",
       });
@@ -36,6 +37,7 @@ export class FetchTokenDeployer {
   async fetchRakeFeeRecipient(hash: string) {
     try {
       const url: string = getInternalApiUrl(hash);
+    
       const response = await fetch(url, {
         method: "GET",
       });

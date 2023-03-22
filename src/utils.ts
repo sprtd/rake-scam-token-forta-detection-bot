@@ -3,13 +3,13 @@ dotenv.config();
 import { LogDescription, Finding, ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY } from "./constants";
+import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, GET_DEPLOYER_ENDPOINT, GET_INTERNAL_TXN_ENDPOINT } from "./constants";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
 import { TOTAL_TOKEN_ADDRESSES } from "./agent";
 
-const { GET_DEPLOYER_ENDPOINT, API_KEY, GET_INTERNAL_URL } = process.env;
+const { API_KEY } = process.env;
 
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
@@ -64,7 +64,7 @@ const parseSwapEvents = (swapEvents: LogDescription[], swapRecipient: string, em
 };
 
 export const getApiUrl = (tokenAddress: string): string => `${GET_DEPLOYER_ENDPOINT}${tokenAddress}&apikey=${API_KEY}`;
-export const getInternalApiUrl = (txHash: string): string => `${GET_INTERNAL_URL}${txHash}&apikey=${API_KEY}`;
+export const getInternalApiUrl = (txHash: string): string => `${GET_INTERNAL_TXN_ENDPOINT}${txHash}&apikey=${API_KEY}`;
 
 export const returnOnlyMatchingRakeFeeRecipient = (fetchedRakeFeeRecipient: any[], tokenAddress: string): any[] => {
   const filteredRakeFeeRecipient = fetchedRakeFeeRecipient.filter(
