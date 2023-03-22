@@ -18,7 +18,7 @@ export const createFinding = async (
 
   let fetchTokenDeployer = new FetchTokenDeployer(rakeTokenAddress);
   await new Promise(resolve => {
-    setTimeout(resolve, 1000); // 1s
+    setTimeout(resolve, 500); // 1s
   });
   const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
   const fetchedRakeFeeRecipient = await fetchTokenDeployer.fetchRakeFeeRecipient(txHash);
