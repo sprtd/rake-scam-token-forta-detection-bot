@@ -39,20 +39,20 @@ Describe each of the type of alerts fired by this agent
 ## Test Data
 
 The bot behaviour can be verified with the following transactions:
-- [0x063c470f8fd26d78fe42ddf2aaab12d96ca8b30cac6e8cde690f42e1b3ea8627](https://etherscan.io/tx/0x063c470f8fd26d78fe42ddf2aaab12d96ca8b30cac6e8cde690f42e1b3ea8627) - 
-`Ethereum Mainnet - swapExactTokensForEthSupportingFeeOnTransferTokens`
+> [0x063c470f8fd26d78fe42ddf2aaab12d96ca8b30cac6e8cde690f42e1b3ea8627](https://etherscan.io/tx/0x063c470f8fd26d78fe42ddf2aaab12d96ca8b30cac6e8cde690f42e1b3ea8627)
+  > Ethereum Mainnet - swapExactTokensForEthSupportingFeeOnTransferTokens
   > Raked Fee Percentage - 35%
 
 
 
-- [0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5](https://etherscan.io/tx/0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5) -
-`Ethereum Mainnet - swapExactETHForTokensSupportingFeeOnTransferTokens`
+> [0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5](https://etherscan.io/tx/0x4ca490a9e8a84765dbffe7b56a04818be4947ab280b498104b166f12c2e312c5) 
+> Ethereum Mainnet - swapExactETHForTokensSupportingFeeOnTransferTokens
   > Raked Fee Percentage -  5%
 
 
 
-- [0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1](https://etherscan.io/tx/0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1) -
-`Ethereum Mainnet - swapExactTokensForTokensSupportingFeeOnTransferTokens`
+> [0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1](https://etherscan.io/tx/0xcde33f74ec5704351da105e153e7012a6303815e6c82acab12bdf016e7da15c1)
+> Ethereum Mainnet - swapExactTokensForTokensSupportingFeeOnTransferTokens
   > Raked Fee Percentage -  5.75%
 
 
