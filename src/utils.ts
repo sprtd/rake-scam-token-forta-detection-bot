@@ -3,13 +3,16 @@ dotenv.config();
 import { LogDescription, Finding, ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY, GET_DEPLOYER_ENDPOINT, GET_INTERNAL_TXN_ENDPOINT } from "./constants";
+import {
+  THRESHOLD_PERCENT,
+  UNISWAP_PAIR_INIT_CODE_HASH,
+  UNISWAP_V2_FACTORY,
+} from "./constants";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
 import { TOTAL_TOKEN_ADDRESSES } from "./agent";
-
-const { API_KEY } = process.env;
+import { etherscanUrlConfig } from "./etherscan.url.config";
 
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
@@ -63,8 +66,15 @@ const parseSwapEvents = (swapEvents: LogDescription[], swapRecipient: string, em
   return [initialAmountOut, actualAmountIn];
 };
 
-export const getApiUrl = (tokenAddress: string): string => `${GET_DEPLOYER_ENDPOINT}${tokenAddress}&apikey=${API_KEY}`;
-export const getInternalApiUrl = (txHash: string): string => `${GET_INTERNAL_TXN_ENDPOINT}${txHash}&apikey=${API_KEY}`;
+export const etherscanContractCreationUrl = (tokenAddress: string, chainId: number): string => {
+  const { apiKey, getDeployerUrl } = etherscanUrlConfig(chainId);
+  return `${getDeployerUrl}${tokenAddress}&apikey=${apiKey}`;
+};
+
+export const etherscanInternalTxnUrl = (txHash: string, chainId: number): string => {
+  const { apiKey, getInternalTxnUrl } = etherscanUrlConfig(chainId);
+  return `${getInternalTxnUrl}${txHash}&apikey=${apiKey}`;
+};
 
 export const returnOnlyMatchingRakeFeeRecipient = (fetchedRakeFeeRecipient: any[], tokenAddress: string): any[] => {
   const filteredRakeFeeRecipient = fetchedRakeFeeRecipient.filter(

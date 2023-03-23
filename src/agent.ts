@@ -31,7 +31,7 @@ export const provideHandleTransaction = (
 ): HandleTransaction => {
   return async (txEvent: TransactionEvent): Promise<Finding[]> => {
     const findings: Finding[] = [];
-    if (!txEvent.logs.length) return findings // return empty findings for failed transactions
+    if (!txEvent.logs.length) return findings; // return empty findings for failed transactions
     if (txEvent.to === lCase(networkManager.router)) TOTAL_TOKEN_ADDRESSES++;
     const txDescriptions: TransactionDescription[] = txEvent.filterFunction(functionAbi, networkManager.router);
     if (!txDescriptions) return findings;

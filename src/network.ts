@@ -43,7 +43,7 @@ const AVALANCHE_DATA: NetworkData = {
 };
 
 const FANTOM_DATA: NetworkData = {
-  chainId: 42220,
+  chainId: 250,
   factory: UNISWAP_V2_FACTORY,
   router: UNISWAP_V2_ROUTER,
   pairInitCodeHash: UNISWAP_PAIR_INIT_CODE_HASH,

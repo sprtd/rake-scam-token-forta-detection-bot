@@ -15,7 +15,6 @@ export const createFinding = async (
   rakedFeePercentage: string,
   anomalyScore: string
 ): Promise<Finding> => {
-
   let fetchTokenDeployer = new FetchTokenDeployer(rakeTokenAddress);
   await new Promise(resolve => {
     setTimeout(resolve, 500); // 1s
@@ -23,8 +22,8 @@ export const createFinding = async (
   const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
   const fetchedRakeFeeRecipient = await fetchTokenDeployer.fetchRakeFeeRecipient(txHash);
   let matchingRakeFeeRecipient: any[] = [];
-  if(fetchedRakeFeeRecipient)
-   matchingRakeFeeRecipient = returnOnlyMatchingRakeFeeRecipient(fetchedRakeFeeRecipient, rakeTokenAddress);
+  if (fetchedRakeFeeRecipient)
+    matchingRakeFeeRecipient = returnOnlyMatchingRakeFeeRecipient(fetchedRakeFeeRecipient, rakeTokenAddress);
 
   let metadata: any = {
     rakeTokenAddress,

@@ -22,7 +22,3 @@ export const UNISWAP_PAIR_INIT_CODE_HASH = "0x96e8ac4277198ff8b6f785478aa9a39f40
 export const UNISWAP_V2_FACTORY = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
 
 export const THRESHOLD_PERCENT = 3;
-
-export const GET_DEPLOYER_ENDPOINT = "https://api.etherscan.io/api?module=contract&action=getcontractcreation&contractaddresses="
-export const GET_INTERNAL_TXN_ENDPOINT =  "https://api.etherscan.io/api?module=account&action=txlistinternal&txhash="
-

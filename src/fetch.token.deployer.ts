@@ -1,5 +1,7 @@
 import fetch from "node-fetch";
-import { getApiUrl, getInternalApiUrl } from "./utils";
+import { ethers, getEthersProvider } from "forta-agent";
+
+import { etherscanContractCreationUrl, etherscanInternalTxnUrl } from "./utils";
 export class FetchTokenDeployer {
   rakeTokenAddress: string;
   deployer: any;
@@ -13,8 +15,10 @@ export class FetchTokenDeployer {
   async fetchDeployerAndTxHash() {
     try {
       const tokenAddress = this.rakeTokenAddress;
-      const url: string = getApiUrl(tokenAddress);
-    
+      const provider: ethers.providers.Provider = getEthersProvider();
+      const { chainId } = await provider.getNetwork();
+      const url: string = etherscanContractCreationUrl(tokenAddress, chainId);
+
       const response = await fetch(url, {
         method: "GET",
       });
@@ -36,12 +40,13 @@ export class FetchTokenDeployer {
 
   async fetchRakeFeeRecipient(hash: string) {
     try {
-      const url: string = getInternalApiUrl(hash);
-    
+      const provider: ethers.providers.Provider = getEthersProvider();
+      const { chainId } = await provider.getNetwork();
+      const url: string = etherscanInternalTxnUrl(hash, chainId);
+
       const response = await fetch(url, {
         method: "GET",
       });
-
       const data = await response.json();
       if (data?.status === "1") {
         this.feeRecipient = data.result;

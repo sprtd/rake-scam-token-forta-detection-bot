@@ -3,8 +3,6 @@ import { createAddress } from "forta-agent-tools/lib/utils";
 import { TestTransactionEvent } from "forta-agent-tools/lib/test";
 import { keccak256 } from "forta-agent/dist/sdk/utils";
 import fetch, { Response } from "node-fetch";
-jest.mock("node-fetch");
-
 import BigNumber from "bignumber.js";
 BigNumber.set({ DECIMAL_PLACES: 18 });
 import { provideHandleTransaction, TOTAL_TOKEN_ADDRESSES as MOCK_TOTAL_TOKEN_ADDRESSES } from "./agent";
@@ -20,6 +18,8 @@ import {
 } from "./constants";
 import NetworkData from "./network";
 
+jest.mock("node-fetch");
+jest.setTimeout(60000);
 const MOCK_OTHER_FUNCTION: string = "function _swap(uint[] memory amounts, address[] memory path, address _to)";
 const MOCK_FACTORY: string = createAddress("0xaaa0000");
 const MOCK_INIT_CODE_HASH: string = keccak256(MOCK_FACTORY);
@@ -122,7 +122,6 @@ let mockCreateFinding = (
   MOCK_TOTAL_FINDINGS++;
   let anomalyScore = MOCK_TOTAL_FINDINGS / MOCK_TOTAL_TOKEN_ADDRESSES;
 
-
   let mockMetadata: any = {
     rakeTokenAddress,
     pairAddress,
@@ -171,7 +170,7 @@ describe("Rake Scam Token Test Suite", () => {
   let handleTransaction: HandleTransaction;
   let mockFetch: any;
 
-  beforeAll(() => {
+  beforeEach(() => {
     mockFetch = jest.mocked(fetch, true);
     handleTransaction = provideHandleTransaction(
       [
@@ -614,7 +613,7 @@ describe("Rake Scam Token Test Suite", () => {
           toBn(amount0In).minus(actualAmount),
           rakedFeePercentage.toFixed(2),
           mockTokenDeployerResult?.deployer,
-          mockTokenDeployerResult?.deployTxHash,
+          mockTokenDeployerResult?.deployTxHash
         ),
       ]);
     });
@@ -985,7 +984,6 @@ describe("Rake Scam Token Test Suite", () => {
       const mockRakeFeeRecipient = await mockFetchTokenDeployer.fetchRakeFeeRecipient(txEvent.hash);
 
       const findings = await handleTransaction(txEvent);
-
 
       expect(findings).toStrictEqual([
         mockCreateFinding(
