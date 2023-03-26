@@ -8,7 +8,7 @@ export const etherscanUrlConfig = (chainId: number) => {
       etherscanApi = {
         apiKey: `${YOUR_API_KEY}`,
         getDeployerUrl: "https://api.etherscan.io/api?module=contract&action=getcontractcreation&contractaddresses=",
-        getInternalTxnUrl: "https://api.etherscan.io/api?module=account&action=txlistinternal&txhash=internal&txhash=",
+        getInternalTxnUrl: "https://api.etherscan.io/api?module=account&action=txlistinternal&txhash=",
       };
       break;
 
@@ -43,6 +43,8 @@ export const etherscanUrlConfig = (chainId: number) => {
         getDeployerUrl: "https://api.snowtrace.io/api?module=contract&action=getcontractcreation&contractaddresses=",
         getInternalTxnUrl: "https://api.snowtrace.io/api?module=account&action=txlistinternal&txhash=",
       };
+      break;
+
 
     case 250:
       etherscanApi = {
@@ -50,6 +52,8 @@ export const etherscanUrlConfig = (chainId: number) => {
         getDeployerUrl: "https://api.ftmscan.com/api?module=contract&action=getcontractcreation&contractaddresses=",
         getInternalTxnUrl: "https://api.ftmscan.com/api?module=account&action=txlistinternal&txhash=",
       };
+      break;
+
 
     case 56:
       etherscanApi = {

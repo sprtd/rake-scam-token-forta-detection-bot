@@ -48,6 +48,7 @@ export class FetchTokenDeployer {
         method: "GET",
       });
       const data = await response.json();
+      console.log("data__", data)
       if (data?.status === "1") {
         this.feeRecipient = data.result;
         return this.feeRecipient;

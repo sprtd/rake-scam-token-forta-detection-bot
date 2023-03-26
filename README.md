@@ -2,7 +2,7 @@
 
 ## Description
 
-This bot detects rake scam tokens which significantly takes additional swap fee on Uniswap DEX and transfers it to an EOA
+This bot detects rake scam tokens that significantly take an additional swap fee on Uniswap DEX and transfer it to an EOA
 
 ## Supported Chains
 
