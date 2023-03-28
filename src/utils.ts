@@ -3,11 +3,7 @@ dotenv.config();
 import { LogDescription, Finding, ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import {
-  THRESHOLD_PERCENT,
-  UNISWAP_PAIR_INIT_CODE_HASH,
-  UNISWAP_V2_FACTORY,
-} from "./constants";
+import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY } from "./constants";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";

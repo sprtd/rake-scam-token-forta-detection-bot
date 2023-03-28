@@ -45,7 +45,6 @@ export const etherscanUrlConfig = (chainId: number) => {
       };
       break;
 
-
     case 250:
       etherscanApi = {
         apiKey: `${YOUR_API_KEY}`,
@@ -53,7 +52,6 @@ export const etherscanUrlConfig = (chainId: number) => {
         getInternalTxnUrl: "https://api.ftmscan.com/api?module=account&action=txlistinternal&txhash=",
       };
       break;
-
 
     case 56:
       etherscanApi = {

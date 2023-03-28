@@ -44,7 +44,7 @@ export class FetchTokenDeployer {
       const provider: ethers.providers.Provider = getEthersProvider();
       const { chainId } = await provider.getNetwork();
       const url: string = etherscanInternalTxnUrl(hash, chainId);
-      
+
       const response = await fetch(url, {
         method: "GET",
       });

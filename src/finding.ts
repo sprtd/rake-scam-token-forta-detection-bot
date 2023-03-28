@@ -57,14 +57,14 @@ export const createFinding = async (
     metadata,
     labels: deployerAndTxHash?.deployer
       ? [
-        {
-          entityType: EntityType.Address,
-          entity: deployerAndTxHash?.deployer,
-          label: "attacker",
-          confidence: 0.9,
-          remove: false,
-        },
-      ]
+          {
+            entityType: EntityType.Address,
+            entity: deployerAndTxHash?.deployer,
+            label: "attacker",
+            confidence: 0.9,
+            remove: false,
+          },
+        ]
       : undefined,
   });
 };
