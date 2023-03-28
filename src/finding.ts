@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { EntityType, ethers, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
+import { EntityType, ethers, Finding, FindingSeverity, FindingType } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
 import { returnOnlyMatchingRakeFeeRecipient } from "./utils";
 
@@ -17,7 +17,7 @@ export const createFinding = async (
 ): Promise<Finding> => {
   let fetchTokenDeployer = new FetchTokenDeployer(rakeTokenAddress);
   await new Promise(resolve => {
-    setTimeout(resolve, 500); // 1s
+    setTimeout(resolve, 500); // 0.5s
   });
   const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
   const fetchedRakeFeeRecipient = await fetchTokenDeployer.fetchRakeFeeRecipient(txHash);

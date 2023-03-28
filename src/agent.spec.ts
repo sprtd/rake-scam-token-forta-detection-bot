@@ -19,7 +19,7 @@ import {
 import NetworkData from "./network";
 
 jest.mock("node-fetch");
-jest.setTimeout(60000);
+
 const MOCK_OTHER_FUNCTION: string = "function _swap(uint[] memory amounts, address[] memory path, address _to)";
 const MOCK_FACTORY: string = createAddress("0xaaa0000");
 const MOCK_INIT_CODE_HASH: string = keccak256(MOCK_FACTORY);
@@ -182,6 +182,7 @@ describe("Rake Scam Token Test Suite", () => {
       UNISWAP_V2_SWAP_EVENT,
       TOKEN_TRANSFER_EVENT
     );
+    // jest.setTimeout(5000);
   });
 
   it("should return empty finding in empty transaction", async () => {
