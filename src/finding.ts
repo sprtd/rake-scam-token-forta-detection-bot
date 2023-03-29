@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { EntityType, ethers, Finding, FindingSeverity, FindingType } from "forta-agent";
+import { EntityType, ethers, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
 import { returnOnlyMatchingRakeFeeRecipient } from "./utils";
 
@@ -46,7 +46,6 @@ export const createFinding = async (
     ethTransferredToRakeFeeRecipient = ethers.utils.formatEther(matchingRakeFeeRecipient[1]);
     metadata = { ...metadata, rakeFeeRecipient, ethTransferredToRakeFeeRecipient };
   }
-
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
     description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
@@ -55,16 +54,14 @@ export const createFinding = async (
     type: FindingType.Info,
     protocol: "GitcoinForta",
     metadata,
-    labels: deployerAndTxHash?.deployer
-      ? [
-          {
-            entityType: EntityType.Address,
-            entity: deployerAndTxHash?.deployer,
-            label: "attacker",
-            confidence: 0.9,
-            remove: false,
-          },
-        ]
-      : undefined,
+    labels: deployerAndTxHash?.deployer ? [
+      Label.fromObject({
+        entity: deployerAndTxHash?.deployer,
+        entityType: EntityType.Address,
+        label: "Attacker",
+        confidence: 0.9,
+        remove: false,
+      }),
+    ] : undefined
   });
 };
