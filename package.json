@@ -1,7 +1,7 @@
 {
   "name": "rake-scam-token-detection-bot",
   "version": "0.0.1",
-  "description": "Detects rake scam tokens which significantly take additional swap fee on Uniswap DEX and transfers it to an EOA",
+  "description": "Detects rake scam tokens that significantly take an additional swap fee on Uniswap DEX and transfer it to an EOA",
   "repository": "https://github.com/sprtd/rake-scam-token-forta-detection-bot.git",
   "chainIds": [
     1,
@@ -37,12 +37,12 @@
     "@ethersproject/solidity": "^5.7.0",
     "@uniswap/v2-core": "^1.0.1",
     "bignumber.js": "^9.1.1",
+    "dotenv": "^16.0.3",
     "forta-agent": "^0.1.18"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@types/nodemon": "^1.19.0",
-    "dotenv": "^16.0.3",
     "forta-agent-tools": "^3.2.6",
     "jest": "^27.0.6",
     "nodemon": "^2.0.8",
