@@ -1,5 +1,13 @@
 require("dotenv").config();
-const { MAINNET_API_KEY, POLYGON_API_KEY, ARBISCAN_API_KEY, OPTIMISM_API_KEY, AVALANCHE_API_KEY, FANTOM_API_KEY, BNB_CHAIN_KEY } = process.env;
+const {
+  MAINNET_API_KEY,
+  POLYGON_API_KEY,
+  ARBISCAN_API_KEY,
+  OPTIMISM_API_KEY,
+  AVALANCHE_API_KEY,
+  FANTOM_API_KEY,
+  BNB_CHAIN_KEY,
+} = process.env;
 
 export const etherscanUrlConfig = (chainId: number) => {
   let etherscanApi: any;

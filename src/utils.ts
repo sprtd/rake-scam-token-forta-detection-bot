@@ -35,7 +35,7 @@ const parseTransferEvents = (
 ): any[] => {
   let from: string, to: string;
   let actualValue: BigNumber = toBn(0);
-  transferEvents.forEach(event => {
+  transferEvents.forEach((event) => {
     from = lCase(event.args.from);
     to = lCase(event.args.to);
     let value: BigNumber = toBn(event.args.value);
@@ -49,7 +49,7 @@ const parseTransferEvents = (
 const parseSwapEvents = (swapEvents: LogDescription[], swapRecipient: string, emitingAddr: string): any[] => {
   let initialAmountOut: BigNumber = toBn(0),
     actualAmountIn: BigNumber = toBn(0);
-  swapEvents.forEach(event => {
+  swapEvents.forEach((event) => {
     if (lCase(event.args.to) === lCase(swapRecipient) && lCase(event.address) === lCase(emitingAddr)) {
       const amount0In = toBn(event.args.amount0In);
       const amount1In = toBn(event.args.amount1In);
@@ -88,10 +88,7 @@ const checkForFinding = async (
   txFrom: string,
   txName: string
 ): Promise<Finding[]> => {
-  const rakedInPercentage = initialAmountIn
-    .minus(actualAmountIn)
-    .div(initialAmountIn)
-    .multipliedBy(100);
+  const rakedInPercentage = initialAmountIn.minus(actualAmountIn).div(initialAmountIn).multipliedBy(100);
   if (rakedInPercentage.gte(THRESHOLD_PERCENT)) {
     TOTAL_FINDINGS++;
     let anomalyScore = TOTAL_FINDINGS / TOTAL_TOKEN_ADDRESSES;

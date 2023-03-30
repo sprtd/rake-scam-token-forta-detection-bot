@@ -16,7 +16,7 @@ export const createFinding = async (
   anomalyScore: string
 ): Promise<Finding> => {
   let fetchTokenDeployer = new FetchTokenDeployer(rakeTokenAddress);
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     setTimeout(resolve, 500); // 0.5s
   });
   const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
@@ -54,14 +54,16 @@ export const createFinding = async (
     type: FindingType.Info,
     protocol: "GitcoinForta",
     metadata,
-    labels: deployerAndTxHash?.deployer ? [
-      Label.fromObject({
-        entity: deployerAndTxHash?.deployer,
-        entityType: EntityType.Address,
-        label: "Attacker",
-        confidence: 0.9,
-        remove: false,
-      }),
-    ] : undefined
+    labels: deployerAndTxHash?.deployer
+      ? [
+          Label.fromObject({
+            entity: deployerAndTxHash?.deployer,
+            entityType: EntityType.Address,
+            label: "Attacker",
+            confidence: 0.9,
+            remove: false,
+          }),
+        ]
+      : undefined,
   });
 };
