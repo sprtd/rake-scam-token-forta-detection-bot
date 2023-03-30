@@ -23,7 +23,7 @@ export class FetchTokenDeployer {
       const response = await fetch(url, {
         method: "GET",
       });
-      const data = await response.json();
+      const data: any = await response.json();
       if (data?.status === "1") {
         this.deployer = data.result[0].contractCreator;
         this.deployTxHash = data.result[0].txHash;
@@ -48,7 +48,7 @@ export class FetchTokenDeployer {
       const response = await fetch(url, {
         method: "GET",
       });
-      const data = await response.json();
+      const data: any = await response.json();
       if (data?.status === "1") {
         this.feeRecipient = data.result;
         return this.feeRecipient;
