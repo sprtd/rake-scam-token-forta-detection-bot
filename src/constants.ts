@@ -17,8 +17,4 @@ export const UNISWAP_V2_SWAP_EVENT: string =
 
 export const TOKEN_TRANSFER_EVENT: string = "event Transfer(address indexed from, address indexed to, uint256 value)";
 
-export const UNISWAP_PAIR_INIT_CODE_HASH = "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f";
-
-export const UNISWAP_V2_FACTORY = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
-
 export const THRESHOLD_PERCENT = 3;

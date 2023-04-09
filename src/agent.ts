@@ -45,7 +45,7 @@ export const provideHandleTransaction = (
           txTransferEventLogs,
           txEvent.from,
           txEvent.hash,
-          networkManager.router
+          networkManager
         ))
       );
     }

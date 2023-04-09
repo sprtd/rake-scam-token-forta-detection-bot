@@ -3,12 +3,13 @@ dotenv.config();
 import { LogDescription, Finding, ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENT, UNISWAP_PAIR_INIT_CODE_HASH, UNISWAP_V2_FACTORY } from "./constants";
+import { THRESHOLD_PERCENT } from "./constants";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
 import { TOTAL_TOKEN_ADDRESSES } from "./agent";
 import { etherscanUrlConfig } from "./etherscan.url.config";
+import { NetworkData } from "./network";
 
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
@@ -18,13 +19,13 @@ export const lCase = (address: string): string => address.toLowerCase();
 let TOTAL_FINDINGS = 0;
 
 // generate new pair address
-export const uniCreate2 = (t0: string, t1: string, factory: string = UNISWAP_V2_FACTORY): string => {
+export const uniCreate2 = (t0: string, t1: string, factory: string, initCodeHash: string): string => {
   const tokenA = lCase(t0);
   const tokenB = lCase(t1);
   const token0: string = tokenA < tokenB ? tokenA : tokenB;
   const token1: string = tokenA < tokenB ? tokenB : tokenA;
   let salt = ethers.utils.solidityKeccak256(["address", "address"], [token0, token1]);
-  return lCase(getCreate2Address(factory, salt, UNISWAP_PAIR_INIT_CODE_HASH));
+  return lCase(getCreate2Address(factory, salt, initCodeHash));
 };
 
 const parseTransferEvents = (
@@ -117,7 +118,9 @@ const executeExactTokenForEthFeeOnTransfer = async (
   txHash: string,
   txFrom: string,
   finding: Finding[],
-  router: string
+  router: string,
+  factory: string,
+  initCodeHash: string
 ) => {
   let actualAmountIn: BigNumber, initialAmountIn: BigNumber, to: string, pairAddress: string;
   initialAmountIn = toBn(txDescription.args.amountIn);
@@ -125,8 +128,8 @@ const executeExactTokenForEthFeeOnTransfer = async (
 
   let tokenSender: string = lCase(txFrom);
   for (let i = 0; i < path.length - 1; i++) {
-    pairAddress = uniCreate2(path[i], path[i + 1]);
-    to = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : router;
+    pairAddress = uniCreate2(path[i], path[i + 1], factory, initCodeHash);
+    to = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2], factory, initCodeHash) : router;
     [actualAmountIn] = parseTransferEvents(transferEvents, tokenSender, pairAddress, path[i]);
 
     finding.push(
@@ -152,7 +155,9 @@ const executeExactETHForTokensFeeOnTransfer = async (
   swapEvents: LogDescription[],
   txHash: string,
   txFrom: string,
-  finding: Finding[]
+  finding: Finding[],
+  factory: string,
+  initCodeHash: string
 ) => {
   let initialAmountIn: BigNumber,
     actualAmountIn: BigNumber,
@@ -161,13 +166,15 @@ const executeExactETHForTokensFeeOnTransfer = async (
     prevPairAddress: string;
   const path: string[] = txDescription.args.path;
   for (let i = 1; i < path.length; i++) {
-    swapRecipient = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : txDescription.args.to;
-    prevPairAddress = uniCreate2(path[i - 1], path[i]);
+    swapRecipient =
+      i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2], factory, initCodeHash) : txDescription.args.to;
+    prevPairAddress = uniCreate2(path[i - 1], path[i], factory, initCodeHash);
     if (i === path.length - 1) {
       [initialAmountIn] = parseSwapEvents(swapEvents, swapRecipient, prevPairAddress);
       [actualAmountIn] = parseTransferEvents(transferEvents, prevPairAddress, swapRecipient, path[i]);
     } else {
-      pairAddress = uniCreate2(path[i], path[i + 1]);
+      pairAddress = uniCreate2(path[i], path[i + 1], factory, initCodeHash);
+
       [initialAmountIn] = parseSwapEvents(swapEvents, pairAddress, prevPairAddress);
       [, actualAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
     }
@@ -191,18 +198,21 @@ const executeExactTokensForTokensFeeOnTransfer = async (
   swapEvents: LogDescription[],
   txFrom: string,
   txHash: string,
-  finding: Finding[]
+  finding: Finding[],
+  factory: string,
+  initCodeHash: string
 ) => {
   let initialAmountIn: BigNumber, actualAmountIn: BigNumber, swapRecipient: string, pairAddress: string;
   initialAmountIn = toBn(txDescription.args.amountIn);
   const path: string[] = txDescription.args.path;
   for (let i = 0; i < path.length; i++) {
-    swapRecipient = i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2]) : txDescription.args.to;
+    swapRecipient =
+      i < path.length - 2 ? uniCreate2(path[i + 1], path[i + 2], factory, initCodeHash) : txDescription.args.to;
     if (i === path.length - 1) {
-      pairAddress = uniCreate2(path[i - 1], path[i]);
+      pairAddress = uniCreate2(path[i - 1], path[i], factory, initCodeHash);
       [actualAmountIn] = parseTransferEvents(transferEvents, pairAddress, swapRecipient, path[i]);
     } else {
-      pairAddress = uniCreate2(path[i], path[i + 1]);
+      pairAddress = uniCreate2(path[i], path[i + 1], factory, initCodeHash);
       [, actualAmountIn] = parseSwapEvents(swapEvents, swapRecipient, pairAddress);
     }
     finding.push(
@@ -226,7 +236,7 @@ export const filterFunctionAndEvent = async (
   transferEvents: LogDescription[],
   txFrom: string,
   txHash: string,
-  router: string
+  networkManager: NetworkData
 ): Promise<Finding[]> => {
   let findings: Finding[] = [];
   switch (txDescription.name) {
@@ -238,12 +248,23 @@ export const filterFunctionAndEvent = async (
         txHash,
         txFrom,
         findings,
-        router
+        networkManager.router,
+        networkManager.factory,
+        networkManager.pairInitCodeHash
       );
       break;
     }
     case "swapExactETHForTokensSupportingFeeOnTransferTokens": {
-      await executeExactETHForTokensFeeOnTransfer(txDescription, transferEvents, swapEvents, txHash, txFrom, findings);
+      await executeExactETHForTokensFeeOnTransfer(
+        txDescription,
+        transferEvents,
+        swapEvents,
+        txHash,
+        txFrom,
+        findings,
+        networkManager.factory,
+        networkManager.pairInitCodeHash
+      );
       break;
     }
     case "swapExactTokensForTokensSupportingFeeOnTransferTokens": {
@@ -253,7 +274,9 @@ export const filterFunctionAndEvent = async (
         swapEvents,
         txFrom,
         txHash,
-        findings
+        findings,
+        networkManager.factory,
+        networkManager.pairInitCodeHash
       );
       break;
     }
