@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { EntityType, ethers, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
 import { returnOnlyMatchingRakeFeeRecipient } from "./utils";
+import { BigNumberish } from "starknet/dist/utils/number";
 
 export const createFinding = async (
   rakeTokenAddress: string,
@@ -38,13 +39,15 @@ export const createFinding = async (
     rakeTokenDeployTxHash: deployerAndTxHash?.deployTxHash,
   };
 
-  let rakeFeeRecipient = "",
-    ethTransferredToRakeFeeRecipient = "";
 
   if (matchingRakeFeeRecipient?.length) {
-    rakeFeeRecipient = matchingRakeFeeRecipient[0];
-    ethTransferredToRakeFeeRecipient = ethers.utils.formatEther(matchingRakeFeeRecipient[1]);
-    metadata = { ...metadata, rakeFeeRecipient, ethTransferredToRakeFeeRecipient };
+    const rakeRecipient = matchingRakeFeeRecipient.map(feeRecipient => ({
+      ethTransferredToRakeFeeRecipient: feeRecipient.value,
+      rakeFeeRecipient: feeRecipient.to
+    }))
+
+    metadata = { ...metadata, rakeRecipient };
+
   }
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
@@ -56,14 +59,14 @@ export const createFinding = async (
     metadata,
     labels: deployerAndTxHash?.deployer
       ? [
-          Label.fromObject({
-            entity: deployerAndTxHash?.deployer,
-            entityType: EntityType.Address,
-            label: "Attacker",
-            confidence: 0.9,
-            remove: false,
-          }),
-        ]
+        Label.fromObject({
+          entity: deployerAndTxHash?.deployer,
+          entityType: EntityType.Address,
+          label: "Attacker",
+          confidence: 0.6,
+          remove: false,
+        }),
+      ]
       : undefined,
   });
 };

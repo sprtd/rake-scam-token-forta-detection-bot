@@ -23,18 +23,24 @@ Describe each of the type of alerts fired by this agent
   - Severity is always set to "low" 
   - Type is always set to "info"
   - Metadata contains the following fields: 
-    - rakeTokenAddress: address of the rake scam token
-    - pairAddress: address of the created uniswap tokens pair
-    - from: address of the user initiating the swap transaction on Uniswap
-    - totalAmountTransferred: total amount of scam tokens transferred to Uniswap Router contract
-    - actualAmountReceived: amount received by the user executing the swap following the deduction of swap fee
-    - rakedFee: total fee taken by scam token contract
-    - rakedFeePercentage: percentage of the fee raked in by the scam token contract
-    - anomalyScore: total finding count divided by total unique rake token addresses detected
-    - attackerRakeTokenDeployer: address of the rake token contract deployer
-    - rakeTokenDeployTxHash: transaction hash of the deployed rake token contract
-    - rakeFeeRecipient: address to which the rake fee is transferred
-    - ethTransferredToRakeFeeRecipient: ETH value transferred to rake fee recipient
+    - `rakeTokenAddress`: address of the rake scam token
+    - `pairAddress`: address of the created uniswap tokens pair
+    - `from`: address of the user initiating the swap transaction on Uniswap
+    - `totalAmountTransferred`: total amount of scam tokens transferred to Uniswap Router contract
+    - `actualAmountReceived`: amount received by the user executing the swap following the deduction of swap fee
+    - `rakedFee`: total fee taken by scam token contract
+    - `rakedFeePercentage`: percentage of the fee raked in by the scam token contract
+    - `anomalyScore`: total finding count divided by total unique rake token addresses detected
+    - `attackerRakeTokenDeployer`: address of the rake token contract deployer
+    - `rakeTokenDeployTxHash`: transaction hash of the deployed rake token contract
+    - `rakeFeeRecipient`: address to which the rake fee is transferred
+    - `ethTransferredToRakeFeeRecipient`: ETH value transferred to rake fee recipient
+  - Labels contain:
+    - `entity`: rake token deployer 
+    - `entityType`: type of the entity, always set to "Address"
+    - `label`: type of the label, always set to "Attacker"
+    - `confidence`: confidence level of the detected transaction, always set to `0.6`
+    - `remove`: boolean indicating whether the label is removed. always set to `false`
 
 ## Test Data
 

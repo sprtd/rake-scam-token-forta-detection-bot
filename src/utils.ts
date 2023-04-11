@@ -3,7 +3,7 @@ dotenv.config();
 import { LogDescription, Finding, ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENT } from "./constants";
+import { THRESHOLD_PERCENT, RAKE_TOKENS } from "./constants";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
@@ -74,10 +74,10 @@ export const etherscanInternalTxnUrl = (txHash: string, chainId: number): string
 };
 
 export const returnOnlyMatchingRakeFeeRecipient = (fetchedRakeFeeRecipient: any[], tokenAddress: string): any[] => {
-  const filteredRakeFeeRecipient = fetchedRakeFeeRecipient.filter(
+  const filteredRakeFeeRecipients = fetchedRakeFeeRecipient.filter(
     (result: any) => result.from === tokenAddress && result.value > 0
   );
-  return !filteredRakeFeeRecipient.length ? [] : [filteredRakeFeeRecipient[0].to, filteredRakeFeeRecipient[0].value];
+  return !filteredRakeFeeRecipients.length ? [] : filteredRakeFeeRecipients;
 };
 
 const checkForFinding = async (
@@ -92,7 +92,11 @@ const checkForFinding = async (
   const rakedInPercentage = initialAmountIn.minus(actualAmountIn).div(initialAmountIn).multipliedBy(100);
   if (rakedInPercentage.gte(THRESHOLD_PERCENT)) {
     TOTAL_FINDINGS++;
+    if (!RAKE_TOKENS.includes(tokenAddress)) {
+      RAKE_TOKENS.push(tokenAddress)
+    } else return []
     let anomalyScore = TOTAL_FINDINGS / TOTAL_TOKEN_ADDRESSES;
+
     return [
       await createFinding(
         lCase(tokenAddress),

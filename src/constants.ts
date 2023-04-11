@@ -18,3 +18,5 @@ export const UNISWAP_V2_SWAP_EVENT: string =
 export const TOKEN_TRANSFER_EVENT: string = "event Transfer(address indexed from, address indexed to, uint256 value)";
 
 export const THRESHOLD_PERCENT = 3;
+
+export const RAKE_TOKENS: string[] = []
