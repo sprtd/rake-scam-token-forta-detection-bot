@@ -31,8 +31,6 @@ export class FetchTokenDeployer {
           deployer: this.deployer,
           deployTxHash: this.deployTxHash,
         };
-      } else {
-        console.log("Etherscan fetch deployer and txHash query error: ", data?.message);
       }
     } catch (error) {
       console.log("Failed to fetch token deployer: ", error);
