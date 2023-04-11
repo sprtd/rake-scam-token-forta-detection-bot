@@ -50,9 +50,7 @@ export class FetchTokenDeployer {
       if (data?.status === "1") {
         this.feeRecipient = data.result;
         return this.feeRecipient;
-      } else {
-        console.log("Etherscan fetch rake fee recipient query error: ", data?.message);
-      }
+      } 
     } catch (error) {
       console.log("Failed to fetch raked fee recipient: ", error);
     }
