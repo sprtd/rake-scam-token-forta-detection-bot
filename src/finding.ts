@@ -39,16 +39,14 @@ export const createFinding = async (
     rakeTokenDeployTxHash: deployerAndTxHash?.deployTxHash,
   };
 
-
   if (matchingRakeFeeRecipient?.length) {
     const rakeRecipient = matchingRakeFeeRecipient.map(feeRecipient => ({
-      ethTransferredToRakeFeeRecipient: feeRecipient.value,
+      ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
       rakeFeeRecipient: feeRecipient.to
     }))
-
     metadata = { ...metadata, rakeRecipient };
-
   }
+
   return Finding.fromObject({
     name: "Rake Scam Token Detection Bot",
     description: `${feeOnTransferFunctionCalled} function detected on Uniswap Router to take additional swap fee`,
