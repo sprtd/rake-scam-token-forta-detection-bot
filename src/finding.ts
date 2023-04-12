@@ -40,10 +40,10 @@ export const createFinding = async (
   };
 
   if (matchingRakeFeeRecipient?.length) {
-    const rakeRecipient = matchingRakeFeeRecipient.map(feeRecipient => ({
+    const rakeRecipient = matchingRakeFeeRecipient.map((feeRecipient) => ({
       ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
-      rakeFeeRecipient: feeRecipient.to
-    }))
+      rakeFeeRecipient: feeRecipient.to,
+    }));
     metadata = { ...metadata, rakeRecipient };
   }
 
@@ -57,14 +57,14 @@ export const createFinding = async (
     metadata,
     labels: deployerAndTxHash?.deployer
       ? [
-        Label.fromObject({
-          entity: deployerAndTxHash?.deployer,
-          entityType: EntityType.Address,
-          label: "Attacker",
-          confidence: 0.6,
-          remove: false,
-        }),
-      ]
+          Label.fromObject({
+            entity: deployerAndTxHash?.deployer,
+            entityType: EntityType.Address,
+            label: "Attacker",
+            confidence: 0.6,
+            remove: false,
+          }),
+        ]
       : undefined,
   });
 };

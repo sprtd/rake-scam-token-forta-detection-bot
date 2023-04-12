@@ -50,7 +50,7 @@ export class FetchTokenDeployer {
       if (data?.status === "1") {
         this.feeRecipient = data.result;
         return this.feeRecipient;
-      } 
+      }
     } catch (error) {
       console.log("Failed to fetch raked fee recipient: ", error);
     }

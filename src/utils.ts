@@ -93,8 +93,8 @@ const checkForFinding = async (
   if (rakedInPercentage.gte(THRESHOLD_PERCENT)) {
     TOTAL_FINDINGS++;
     if (!RAKE_TOKENS.includes(tokenAddress)) {
-      RAKE_TOKENS.push(tokenAddress)
-    } else return []
+      RAKE_TOKENS.push(tokenAddress);
+    } else return [];
     let anomalyScore = TOTAL_FINDINGS / TOTAL_TOKEN_ADDRESSES;
 
     return [

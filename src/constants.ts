@@ -19,4 +19,4 @@ export const TOKEN_TRANSFER_EVENT: string = "event Transfer(address indexed from
 
 export const THRESHOLD_PERCENT = 3;
 
-export const RAKE_TOKENS: string[] = []
+export const RAKE_TOKENS: string[] = [];

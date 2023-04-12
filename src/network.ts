@@ -5,7 +5,7 @@ export interface NetworkData {
   pairInitCodeHash: string;
 }
 
-// Uniswap v2 
+// Uniswap v2
 const MAINNET_DATA: NetworkData = {
   chainId: 1,
   factory: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
