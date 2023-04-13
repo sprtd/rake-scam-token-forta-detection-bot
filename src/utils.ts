@@ -3,13 +3,13 @@ dotenv.config();
 import { LogDescription, Finding, ethers } from "forta-agent";
 import { BigNumberish } from "ethers";
 import { getCreate2Address } from "@ethersproject/address";
-import { THRESHOLD_PERCENT, RAKE_TOKENS } from "./constants";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
 import BigNumber from "bignumber.js";
 import { createFinding } from "./finding";
 import { TOTAL_TOKEN_ADDRESSES } from "./agent";
 import { etherscanUrlConfig } from "./etherscan.url.config";
 import { NetworkData } from "./network";
+import { THRESHOLD_PERCENT, RAKE_TOKENS } from "./constants";
 
 BigNumber.set({ DECIMAL_PLACES: 18 });
 

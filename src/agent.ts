@@ -1,9 +1,9 @@
 import { Finding, HandleTransaction, TransactionEvent, getEthersProvider, ethers } from "forta-agent";
 import { TransactionDescription } from "forta-agent/dist/sdk/transaction.event";
+import BigNumber from "bignumber.js";
 import { filterFunctionAndEvent, lCase } from "./utils";
 import NetworkManager, { NETWORK_MAP } from "./network";
 import NetworkData from "./network";
-
 import {
   SWAP_EXACT_TOKEN_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
   SWAP_EXACT_ETH_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS,
@@ -12,7 +12,6 @@ import {
   TOKEN_TRANSFER_EVENT,
 } from "./constants";
 
-import BigNumber from "bignumber.js";
 BigNumber.set({ DECIMAL_PLACES: 18 });
 
 export let TOTAL_TOKEN_ADDRESSES = 0;

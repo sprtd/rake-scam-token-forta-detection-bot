@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { EntityType, ethers, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
 import { returnOnlyMatchingRakeFeeRecipient } from "./utils";
-import { BigNumberish } from "starknet/dist/utils/number";
 
 export const createFinding = async (
   rakeTokenAddress: string,
@@ -57,14 +56,14 @@ export const createFinding = async (
     metadata,
     labels: deployerAndTxHash?.deployer
       ? [
-          Label.fromObject({
-            entity: deployerAndTxHash?.deployer,
-            entityType: EntityType.Address,
-            label: "Attacker",
-            confidence: 0.6,
-            remove: false,
-          }),
-        ]
+        Label.fromObject({
+          entity: deployerAndTxHash?.deployer,
+          entityType: EntityType.Address,
+          label: "Attacker",
+          confidence: 0.6,
+          remove: false,
+        }),
+      ]
       : undefined,
   });
 };

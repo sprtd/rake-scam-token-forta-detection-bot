@@ -4,7 +4,6 @@ import { TestTransactionEvent } from "forta-agent-tools/lib/test";
 import { keccak256 } from "forta-agent/dist/sdk/utils";
 import fetch, { Response } from "node-fetch";
 import BigNumber from "bignumber.js";
-BigNumber.set({ DECIMAL_PLACES: 18 });
 import { provideHandleTransaction, TOTAL_TOKEN_ADDRESSES as MOCK_TOTAL_TOKEN_ADDRESSES } from "./agent";
 import { uniCreate2, toBn } from "./utils";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
@@ -18,6 +17,7 @@ import {
 } from "./constants";
 import NetworkData from "./network";
 
+BigNumber.set({ DECIMAL_PLACES: 18 });
 jest.mock("node-fetch");
 
 const MOCK_OTHER_FUNCTION: string = "function _swap(uint[] memory amounts, address[] memory path, address _to)";

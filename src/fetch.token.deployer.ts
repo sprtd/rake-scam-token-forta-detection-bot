@@ -1,6 +1,5 @@
 import fetch from "node-fetch";
 import { ethers, getEthersProvider } from "forta-agent";
-
 import { etherscanContractCreationUrl, etherscanInternalTxnUrl } from "./utils";
 
 export class FetchTokenDeployer {
