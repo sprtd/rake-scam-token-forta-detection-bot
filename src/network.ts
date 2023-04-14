@@ -13,10 +13,11 @@ const MAINNET_DATA: NetworkData = {
   pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
 };
 
+// Quickswap DEX
 const POLYGON_MAINNET_DATA: NetworkData = {
   chainId: 137,
-  factory: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-  router: "0x7a250d5630b4cf539739df2c5dacb4c659F2488d",
+  factory: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
+  router: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
   pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
 };
 
@@ -34,7 +35,7 @@ const OPTIMISM_MAINNET_DATA: NetworkData = {
   pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
 };
 
-// Trader Joe
+// Trader Joe DEX
 const AVALANCHE_DATA: NetworkData = {
   chainId: 43114,
   factory: "0x60aE616a2155Ee3d9A68541Ba4544862310933d4",
