@@ -58,4 +58,4 @@ The bot behaviour can be verified with the following transactions:
   > Raked Fee Percentage -  5.75%
 
 
-- This bot's default THRESHOLD_PERCENTAGEAGE is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGEAGE` variable in `src/constants.ts` - [L24](https://github.com/sprtd/rake-scam-token-forta-detection-bot/blob/main/src/constants.ts#L24)
+- This bot's default THRESHOLD_PERCENTAGEAGE is 3 and this can be changed by modifying the `THRESHOLD_PERCENTAGEAGE` variable in `src/constants.ts` - [L18](https://github.com/sprtd/rake-scam-token-forta-detection-bot/blob/main/src/constants.ts#L18)
