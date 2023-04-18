@@ -3,3 +3,4 @@ dist
 forta.config.json
 .env
 publish.log
+Dockerfile
