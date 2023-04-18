@@ -38,9 +38,9 @@ const OPTIMISM_MAINNET_DATA: NetworkData = {
 // Trader Joe DEX
 const AVALANCHE_DATA: NetworkData = {
   chainId: 43114,
-  factory: "0x60aE616a2155Ee3d9A68541Ba4544862310933d4",
-  router: "0x7a250d5630b4cf539739df2c5dacb4c659F2488d",
-  pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+  factory: "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10",
+  router: "0x60aE616a2155Ee3d9A68541Ba4544862310933d4",
+  pairInitCodeHash: "0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91",
 };
 
 // SpiritSwap DEX
