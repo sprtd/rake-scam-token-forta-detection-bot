@@ -21,11 +21,12 @@ const POLYGON_MAINNET_DATA: NetworkData = {
   pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
 };
 
+// Trader Joe DEX
 const ARBITRUM_MAINNET_DATA: NetworkData = {
   chainId: 42161,
-  factory: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-  router: "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
-  pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+  factory: "0x1886D09C9Ade0c5DB822D85D21678Db67B6c2982",
+  router: "0x7bfd7192e76d950832c77bb412aae841049d8d9b",
+  pairInitCodeHash: "0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91",
 };
 
 const OPTIMISM_MAINNET_DATA: NetworkData = {
