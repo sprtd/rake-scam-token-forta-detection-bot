@@ -15,7 +15,7 @@ import {
   TOKEN_TRANSFER_EVENT,
   SWAP_ETH_FOR_EXACT_TOKENS_NO_FEE_ON_TRANSFER_TOKENS,
 } from "./constants";
-import NetworkData from "./network";=
+import NetworkData from "./network";
 BigNumber.set({ DECIMAL_PLACES: 18 });
 jest.mock("node-fetch");
 
