@@ -12,6 +12,12 @@
     42220,
     56
   ],
+  "chainSettings":{
+    "56": {
+       "shards": 2,
+       "target": 2
+    }
+ },
   "scripts": {
     "build": "tsc",
     "start": "npm run start:dev",
