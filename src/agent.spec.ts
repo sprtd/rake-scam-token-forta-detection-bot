@@ -148,14 +148,14 @@ let mockCreateFinding = (
     rakeTokenDeployTxHash,
   };
 
-  let rakeRecipient = [];
+  let recipient = [];
   if (metadataParam && metadataParam?.length) {
-    rakeRecipient = metadataParam?.map((feeRecipient: any) => ({
+    recipient = metadataParam?.map((feeRecipient: any) => ({
       ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
       rakeFeeRecipient: feeRecipient.to,
     }));
-    const formattedRakeRecipient = JSON.stringify(rakeRecipient);
-    mockMetadata = { ...mockMetadata, formattedRakeRecipient };
+    const rakeFeeRecipient = JSON.stringify(recipient);
+    mockMetadata = { ...mockMetadata, rakeFeeRecipient };
   }
 
   return Finding.fromObject({

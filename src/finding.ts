@@ -39,12 +39,12 @@ export const createFinding = async (
   };
 
   if (matchingRakeFeeRecipient?.length) {
-    const rakeRecipient = matchingRakeFeeRecipient.map((feeRecipient) => ({
+    let recipient = matchingRakeFeeRecipient.map((feeRecipient) => ({
       ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
       rakeFeeRecipient: feeRecipient.to,
     }));
-    const formattedRakeRecipient = JSON.stringify(rakeRecipient);
-    metadata = { ...metadata, formattedRakeRecipient };
+    const rakeFeeRecipient = JSON.stringify(recipient);
+    metadata = { ...metadata, rakeFeeRecipient };
   }
 
   return Finding.fromObject({
