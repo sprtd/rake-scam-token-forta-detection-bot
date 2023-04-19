@@ -43,8 +43,8 @@ export const createFinding = async (
       ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
       rakeFeeRecipient: feeRecipient.to,
     }));
-    const rakeRecipientString = JSON.stringify(rakeRecipient);
-    metadata = { ...metadata, rakeRecipientString };
+    const formattedRakeRecipient = JSON.stringify(rakeRecipient);
+    metadata = { ...metadata, formattedRakeRecipient };
   }
 
   return Finding.fromObject({
