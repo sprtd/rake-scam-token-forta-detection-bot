@@ -154,8 +154,8 @@ let mockCreateFinding = (
       ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
       rakeFeeRecipient: feeRecipient.to,
     }));
-    const rakeFeeRecipient = JSON.stringify(recipient);
-    mockMetadata = { ...mockMetadata, rakeFeeRecipient };
+    const rakeFeeRecipientMetadata = JSON.stringify(recipient);
+    mockMetadata = { ...mockMetadata, rakeFeeRecipientMetadata };
   }
 
   return Finding.fromObject({
