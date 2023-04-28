@@ -73,7 +73,7 @@ export const etherscanInternalTxnUrl = (txHash: string, chainId: number): string
   return `${getInternalTxnUrl}${txHash}&apikey=${apiKey}`;
 };
 
-export const returnOnlyMatchingRakeFeeRecipient = (fetchedRakeFeeRecipient: any[], tokenAddress: string): any[] => {
+export const returnMatchingEthTransferredToRecipients = (fetchedRakeFeeRecipient: any[], tokenAddress: string): any[] => {
   const filteredRakeFeeRecipients = fetchedRakeFeeRecipient.filter(
     (result: any) => result.from === tokenAddress && result.value > 0
   );

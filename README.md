@@ -2,7 +2,7 @@
 
 ## Description
 
-This bot detects rake scam tokens that significantly take an additional swap fee on Uniswap DEX and transfer it to an EOA
+This bot detects rake scam tokens that significantly take an additional swap fee on Uniswap V2 DEX. The rake recipient is always the rake token contract. When the total raked fee reaches a specific threshold, it is swapped for ETH, which is eventually transferred to EOA specified as the recipient(s) in the rake token contract
 
 ## Supported Chains
 
@@ -19,7 +19,7 @@ This bot detects rake scam tokens that significantly take an additional swap fee
 Describe each of the type of alerts fired by this agent
 
 - RAKE-TOKEN-CONTRACT-1
-  - Fired when a token takes significant percentage fee on Uniswap Router and transfers it to an EOA
+  - Fired when a token takes significant percentage fee on Uniswap V2 Router and transfers it to an EOA
   - Severity is always set to "low" 
   - Type is always set to "info"
   - Metadata contains the following fields: 
@@ -30,12 +30,13 @@ Describe each of the type of alerts fired by this agent
     - `actualAmountReceived`: amount received by the user executing the swap following the deduction of swap fee
     - `rakedFee`: total fee taken by scam token contract
     - `rakedFeePercentage`: percentage of the fee raked in by the scam token contract
-    - `anomalyScore`: total finding count divided by total unique rake token addresses detected
+    - `feeRecipient`: address of the rake token contract which takes the rake
     - `attackerRakeTokenDeployer`: address of the rake token contract deployer
     - `rakeTokenDeployTxHash`: transaction hash of the deployed rake token contract
-    - `rakeFeeRecipientMetadata`: captures:
-      - `ethTransferredToRakeFeeRecipient`: ETH value transferred to rake fee recipient
-      - `rakeFeeRecipient`: address to which the rake fee is transferred
+    - `anomalyScore`: total finding count divided by total unique rake token addresses detected
+    - `ethTransferredAfterRakeMetadata`: captures:
+      - `amount`: amount of ETH transferred after rake fee has reached a specific threshold
+      - `EOA`: address to which the ETH is transferred after the total rake fee has reached a specific threshold
   - Labels contain:
     - `entity`: rake token deployer 
     - `entityType`: type of the entity, always set to "Address"

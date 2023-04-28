@@ -143,19 +143,20 @@ let mockCreateFinding = (
     actualValueReceived,
     rakedFee: rakedFee.toString(),
     rakedFeePercentage,
-    anomalyScore: anomalyScore.toString(),
+    feeRecipient: rakeTokenAddress,
     attackerRakeTokenDeployer: rakeTokenDeployer,
     rakeTokenDeployTxHash,
+    anomalyScore: anomalyScore.toString(),
   };
 
-  let recipient = [];
+  let ethRecipient = [];
   if (metadataParam && metadataParam?.length) {
-    recipient = metadataParam?.map((feeRecipient: any) => ({
-      ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
-      rakeFeeRecipient: feeRecipient.to,
+    ethRecipient = metadataParam?.map((feeRecipient: any) => ({
+      amount: ethers.utils.formatEther(feeRecipient.value),
+      EOA: feeRecipient.to,
     }));
-    const rakeFeeRecipientMetadata = JSON.stringify(recipient);
-    mockMetadata = { ...mockMetadata, rakeFeeRecipientMetadata };
+    const ethTransferredAfterRakeMetadata  = JSON.stringify(ethRecipient);
+    mockMetadata = { ...mockMetadata, ethTransferredAfterRakeMetadata  };
   }
 
   return Finding.fromObject({

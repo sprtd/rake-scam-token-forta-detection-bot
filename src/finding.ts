@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { EntityType, ethers, Finding, FindingSeverity, FindingType, Label } from "forta-agent";
 import { FetchTokenDeployer } from "./fetch.token.deployer";
-import { returnOnlyMatchingRakeFeeRecipient } from "./utils";
+import { returnMatchingEthTransferredToRecipients } from "./utils";
 
 export const createFinding = async (
   rakeTokenAddress: string,
@@ -21,9 +21,9 @@ export const createFinding = async (
   });
   const deployerAndTxHash = await fetchTokenDeployer.fetchDeployerAndTxHash();
   const fetchedRakeFeeRecipient = await fetchTokenDeployer.fetchRakeFeeRecipient(txHash);
-  let matchingRakeFeeRecipient: any[] = [];
+  let ethTransferredAfterRake: any[] = [];
   if (fetchedRakeFeeRecipient)
-    matchingRakeFeeRecipient = returnOnlyMatchingRakeFeeRecipient(fetchedRakeFeeRecipient, rakeTokenAddress);
+    ethTransferredAfterRake = returnMatchingEthTransferredToRecipients(fetchedRakeFeeRecipient, rakeTokenAddress);
 
   let metadata: any = {
     rakeTokenAddress,
@@ -33,18 +33,19 @@ export const createFinding = async (
     actualValueReceived,
     rakedFee: rakedFee.toString(),
     rakedFeePercentage,
-    anomalyScore,
+    feeRecipient: rakeTokenAddress,
     attackerRakeTokenDeployer: deployerAndTxHash?.deployer,
     rakeTokenDeployTxHash: deployerAndTxHash?.deployTxHash,
+    anomalyScore,
   };
 
-  if (matchingRakeFeeRecipient?.length) {
-    let recipient = matchingRakeFeeRecipient.map((feeRecipient) => ({
-      ethTransferredToRakeFeeRecipient: ethers.utils.formatEther(feeRecipient.value),
-      rakeFeeRecipient: feeRecipient.to,
+  if (ethTransferredAfterRake?.length) {
+    let ethRecipient = ethTransferredAfterRake.map((feeRecipient) => ({
+      amount: ethers.utils.formatEther(feeRecipient.value),
+      EOA: feeRecipient.to,
     }));
-    const rakeFeeRecipientMetadata = JSON.stringify(recipient);
-    metadata = { ...metadata, rakeFeeRecipientMetadata };
+    const ethTransferredAfterRakeMetadata = JSON.stringify(ethRecipient);
+    metadata = { ...metadata, ethTransferredAfterRakeMetadata };
   }
 
   return Finding.fromObject({
