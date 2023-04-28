@@ -21,12 +21,13 @@ const POLYGON_MAINNET_DATA: NetworkData = {
   pairInitCodeHash: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
 };
 
-// Trader Joe DEX
+
+// Camelot DEX
 const ARBITRUM_MAINNET_DATA: NetworkData = {
   chainId: 42161,
-  factory: "0x1886D09C9Ade0c5DB822D85D21678Db67B6c2982",
-  router: "0x7bfd7192e76d950832c77bb412aae841049d8d9b",
-  pairInitCodeHash: "0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91",
+  factory: "0x6eccab422d763ac031210895c81787e87b43a652",
+  router: "0xc873fecbd354f5a56e00e710b90ef4201db2448d",
+  pairInitCodeHash: "0xf9b58f4303057dfcbc66f5a8539d1811724090e7f11ae35f59d9fef8aac57183",
 };
 
 const OPTIMISM_MAINNET_DATA: NetworkData = {

@@ -12,12 +12,12 @@
     42220,
     56
   ],
-  "chainSettings":{
+  "chainSettings": {
     "56": {
-       "shards": 2,
-       "target": 2
+      "shards": 2,
+      "target": 2
     }
- },
+  },
   "scripts": {
     "build": "tsc",
     "start": "npm run start:dev",
@@ -40,8 +40,6 @@
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {
-    "@ethersproject/solidity": "^5.7.0",
-    "@uniswap/v2-core": "^1.0.1",
     "bignumber.js": "^9.1.1",
     "dotenv": "^16.0.3",
     "forta-agent": "^0.1.18",
