@@ -2,7 +2,7 @@
 
 ## Description
 
-This bot detects rake scam tokens that significantly take an additional swap fee (rake) on Uniswap V2 DEX. The rake recipient is the rake token contract. The rake accumulates over time; when it reaches a specific threshold, it is swapped for ETH and eventually transferred to EOA specified as the recipient(s) in the rake token contract
+This bot detects rake scam tokens that significantly take an additional swap fee (rake) on decentralized exchanges that implement Uniswap V2 logic. The rake recipient is the rake token contract. The rake accumulates over time; when it reaches a specific threshold, it is swapped for ETH and eventually transferred to EOA specified as the recipient(s) in the rake token contract
 
 ## Supported Chains
 

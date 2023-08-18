@@ -96,7 +96,7 @@ const checkForFinding = async (
       RAKE_TOKENS.push(tokenAddress);
     } else return [];
     let anomalyScore = TOTAL_FINDINGS / TOTAL_TOKEN_ADDRESSES;
-
+    
     return [
       await createFinding(
         lCase(tokenAddress),
